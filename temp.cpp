@@ -13,7 +13,9 @@ int main(int argc, char const *argv[])
 
     // cin.get(chr);
 
-    cout  << setw(20) << "Hello World" << endl;
-    cout  << setprecision(4) << 3.5646 << endl;
+    // cout  << setw(20) << "Hello World" << endl;
+    // cout  << setprecision(4) << 3.5646 << endl;
     return 0;
 }
+
+    
