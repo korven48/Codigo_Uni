@@ -32,7 +32,6 @@ int main()
     input = menu();
     while (input != 0){
         cout << endl << endl;
-        // --------------------- Client Data ---------------------
         if (input == 1){
             cout << "Client Name: ";
             cin.get();
@@ -45,7 +44,6 @@ int main()
             client = true;
         }
 
-        // --------------------- Product Data ---------------------
         if (input == 2){
             cout << "Product Name: ";
             cin.get();
@@ -61,54 +59,46 @@ int main()
             sale = true;
         }
 
-        // --------------------- Invoice ---------------------
         if (input == 3){
             if (!client){
                 cout << "No client data!"  << endl;
-                input = menu();
-                continue;
-            }
-            if (!sale){
+            } 
+            else if (!sale){
                 cout << "No sale data!"  << endl;
-                input = menu();
-                continue;
+            } else{
+                cout << "Invoice:" << endl;
+                cout << setw(47) << name << endl;
+                cout << setw(47) << address << endl;
+                cout << setw(47) << nif << endl;
+
+                if (is_discount == 'Y'){
+                    final_diccount = DISCOUNT;
+                }   
+                
+                total_disccounted = -(units * price * final_diccount/100);
+                price_with_dics = units * price + total_disccounted;
+                taxes = price_with_dics * VAT/100.;
+                total_price = price_with_dics + taxes;
+
+                cout << endl << endl;
+                cout << "Product: " << prod_name << endl;
+                cout << left << setw(40) << "Unitary price" << right << setw(7) << price << endl;
+                cout << left << setw(40) << "Units" << right << setw(7) << units << endl;
+                cout << left << setw(40) << "Total" << right << setw(7) << (units * price) << endl;
+                cout << left << setw(40) << "Discount" << right << setw(7-2) << final_diccount << " %" << endl;
+                cout << setw(47) << total_disccounted << endl;
+                cout << left << setw(40) << "Total after disccount" << right << setw(7) << price_with_dics << endl;
+                cout << left << setw(40) << "VAT" << right << setw(7-2) << VAT << " %" << endl;
+                cout << right << setw(47) << taxes << endl;
+                cout << left << setw(40) << "Final Price" << right << setw(7) << total_price << endl;
             }
-            
-            cout << "Invoice:" << endl;
-            cout << setw(47) << name << endl;
-            cout << setw(47) << address << endl;
-            cout << setw(47) << nif << endl;
-
-            if (is_discount == 'Y'){
-                final_diccount = DISCOUNT;
-            }   
-            
-            total_disccounted = -(units * price * final_diccount/100);
-            price_with_dics = units * price + total_disccounted;
-            taxes = price_with_dics * VAT/100.;
-            total_price = price_with_dics + taxes;
-
-            cout << endl << endl;
-            cout << "Product: " << prod_name << endl;
-            cout << left << setw(40) << "Unitary price" << right << setw(7) << price << endl;
-            cout << left << setw(40) << "Units" << right << setw(7) << units << endl;
-            cout << left << setw(40) << "Total" << right << setw(7) << (units * price) << endl;
-            cout << left << setw(40) << "Discount" << right << setw(7-2) << final_diccount << " %" << endl;
-            cout << setw(47) << total_disccounted << endl;
-            cout << left << setw(40) << "Total after disccount" << right << setw(7) << price_with_dics << endl;
-            cout << left << setw(40) << "VAT" << right << setw(7-2) << VAT << " %" << endl;
-            cout << right << setw(47) << taxes << endl;
-            cout << left << setw(40) << "Final Price" << right << setw(7) << total_price << endl;
-
         }
 
-        // --------------------- Totals ---------------------
         if (input == 4){
             cout << "Total sale: " << total_price << endl; 
             cout << "Total VAT: " << taxes << endl; 
         }
 
-        // --------------------- Restart ---------------------
         if (input == 5){
             client = false;
             sale = false;
