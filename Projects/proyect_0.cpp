@@ -1,10 +1,9 @@
 /*
    SUBMITTED BY:  Lucas Vukotic
-   DATE:          October 23, 2020
+   DATE:          October 29, 2020
 */
 
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <cctype>
 
@@ -46,15 +45,17 @@ int main()
     tLanguage language, subtitle;
 
     ifstream inputFile;
-
-    // ------------------------------------- Reading input & creating output -------------------------------------
     ofstream outputFile;
+
+    // ------------------------------------- Reading input -------------------------------------
+    
     outputFile.open(FILE_NAME);
 
     cout << "Film title: (# to end): ";
     getline(cin, title);
     outputFile << title << endl;
-    while (title != "#"){
+    while (title != "#")
+    {
         cout << "Film director: ";
         getline(cin, director);
         genre = readGenre();
@@ -73,14 +74,20 @@ int main()
         cout << "Rental days: ";
         cin >> rental_days;
 
-        outputFile << director << endl;
-        outputFile << genre << endl << language << endl;
-        outputFile << answer << endl;
-        if (is_subtitled){
+        // -----------------------------  Creating output ------------------------------
+
+        outputFile << director << endl
+                   << genre << endl
+                   << language << endl
+                   << answer << endl;
+
+        if (is_subtitled)
             outputFile << subtitle << endl;
-        }
-        outputFile << minutes << endl;
-        outputFile << nif << endl << date << endl << rental_days << endl;
+
+        outputFile << minutes << endl
+                   << nif << endl
+                   << date << endl
+                   << rental_days << endl;
 
         cout << "Film title: (# to end): ";
         cin.get();
@@ -88,39 +95,42 @@ int main()
         outputFile << title << endl;
     }
 
-    // ------------------------------------- Reading input & creating output -------------------------------------
-    cout << endl << endl;
+    cout << endl
+         << endl;
+    // ------------------------------------- Reading from file -------------------------------------
+
     inputFile.open(FILE_NAME);
     if (inputFile.is_open())
     {
-        rental_n = 1; 
+        rental_n = 1;
         getline(inputFile, title);
-        while (title != "#"){
+        while (title != "#")
+        {
             getline(inputFile, director);
             inputFile >> temp;
-            genre = (tGenre) temp; 
+            genre = (tGenre)temp;
             inputFile >> temp;
-            language = (tLanguage) temp;
+            language = (tLanguage)temp;
             inputFile >> answer;
             is_subtitled = (tolower(answer) == 'y');
-            if (is_subtitled){
+            if (is_subtitled)
+            {
                 inputFile >> temp;
-                subtitle = (tLanguage) temp;
+                subtitle = (tLanguage)temp;
             }
-            inputFile >> minutes;
-            inputFile >> nif;
-            inputFile >> date;
-            inputFile >> rental_days;
+            inputFile >> minutes >> nif >> date >> rental_days;
 
             // ----------------------------- Formatted output --------------------------------
-            // Movie
+            // -- Movie --
             cout << "Rental " << rental_n << endl;
             cout << title << " (" << director << "), " << genreToStr(genre) << ", " << languageToStr(language);
-            if (is_subtitled)   
+
+            if (is_subtitled)
                 cout << " (subt. " << languageToStr(subtitle) << ")";
+
             cout << ", " << minutes << " min." << endl;
 
-            // Client
+            // -- Client --
             cout << "Client: " << nif << " - " << date << ", " << rental_days << " days" << endl;
             cout << "----------" << endl;
 
@@ -129,7 +139,7 @@ int main()
             getline(inputFile, title);
         }
     }
-    
+
     inputFile.close();
     outputFile.close();
 
@@ -149,7 +159,7 @@ tGenre readGenre()
     cout << "5 - Drama" << endl;
     cout << "6 - Mystery" << endl;
     cout << "7 - Horror" << endl;
-    cout << "Choose a genre: ";
+    cout << "Choose a number: ";
     cin >> genre;
 
     result = (tGenre)genre;
@@ -171,7 +181,7 @@ string genreToStr(tGenre genre)
     }
     if (genre == scify)
     {
-        result = "Scify";
+        result = "Science Fiction";
     }
     if (genre == comedy)
     {
@@ -209,7 +219,7 @@ tLanguage readLanguage()
     cout << "4 - German" << endl;
     cout << "5 - Italian" << endl;
     cout << "6 - Portuguese" << endl;
-    cout << "Choose a language: ";
+    cout << "Choose a number: ";
     cin >> lang;
 
     result = (tLanguage)lang;
