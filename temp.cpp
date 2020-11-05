@@ -4,44 +4,61 @@
 
 using namespace std;
 
-// string digitToStr(int digit)
-// {
-//     return string(1, '0' + digit);
-// }
-
-// string tileToStr(short int left, short int right)
-// {
-//     string tile = "|";
-//     tile += digitToStr(left) + string("-") + digitToStr(right) + string("|");
-//     return tile;
-// }
-
-// string placeTileLeft(string lane, short int tileN1, short int tileN2)
-// {
-//     return lane + tileToStr(tileN1, tileN2);
-// }
-int chrToInt(char ch)
+enum tColor
 {
-    return ch - '0';
+    red = 0,
+    green,
+    blue,
+    yellow
+};
+
+short playerStart(tColor color)
+{
+    short result;
+    switch (color)
+    {
+    case red:
+        result = 39;
+        break;
+    case green:
+        result = 56;
+        break;
+    case blue:
+        result = 22;
+        break;
+    case yellow:
+        result = 5;
+        break;
+    }
+
+    return result;
 }
 
-bool canGoRight(string lane, short int tileN1, short int tileN2)
+short movePlayer(short player, tColor color, short rolled)
 {
-    int rightMostNumber = chrToInt(lane[lane.size() - 2]);
+   short next;
+   int goal = playerStart(color) - 5;
+   if (player != -1)
+   {
+      next = (player + rolled) % 68;
+      if (playerStart(color) >= next && next > goal)
+      {
+         cout << "Not a possible move (the goal is closer)!" << endl;
+         next = player;
+      }
+   }
+   else if (rolled == 5)
+      next = playerStart(color);
+   else
+      next = player;
+   
 
-    return rightMostNumber == tileN1 || rightMostNumber == tileN2;
+   return next;
 }
 
 int main(int argc, char const *argv[])
 {
-    int x;
-    char chr = 65;
-    string lane = "|1-2||2-3||3-9|";
-    double d;
+    cout << movePlayer(33, red, 3) << endl;
 
-    // cout << placeTileLeft(lane, 2, 9) << endl;
-    cout << boolalpha << canGoRight(lane, 9, 4) << endl;
     return 0;
 }
-
-    

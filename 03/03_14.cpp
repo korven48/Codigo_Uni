@@ -5,6 +5,8 @@ using namespace std;
 
 int main()
 {
-    /* code */
+    char c;
+    cin >> c;
+    cout << c << endl;
     return 0;
 }
