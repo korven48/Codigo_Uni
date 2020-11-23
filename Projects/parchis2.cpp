@@ -16,14 +16,18 @@ enum tColor
    yellow
 };
 
+const short N_Players = 2;
+typedef short tPositionArray[N_Players];
+typedef tColor tColorArray[N_Players];
 tColor chooseColor();
 string colorToString(tColor color);
 char colorToLetter(tColor color);
 bool isSafe(int pos);
 short playerStart(tColor color);
 short dice();
+int distance(int x, int y);
 
-void display(tColor color1, tColor color2, short player1, short player2);
+void display(const tColorArray colors, const tPositionArray positions);
 short movePlayer(short player, tColor color, short rolled);
 
 bool DEBUG = true;
@@ -32,55 +36,45 @@ const int NUM_SPACES = 68;
 int main()
 {
    const int ExtraMoves = 20;
-   short player1 = -1, player2 = -1, turn = 0, space1, space2, rolled, nSixes;
-   tColor color1, color2;
+   tPositionArray positions = {-1, -1};
+   tColorArray colors;
+   short turn = 0, space1, space2, rolled, nSixes = 0;
 
    srand(time(NULL));
 
-   cout << "Choose the color for the first player..." << endl;
-   color1 = chooseColor();
-   cout << "Choose the color for the second player..." << endl;
-   color2 = chooseColor();
+   for (int i = 0; i < N_Players; i++)
+   {
+      cout << "Choose the color for the player number " << (i + 1) << "..." << endl;
+      colors[i] = chooseColor();
+   }
 
-   display(color1, color2, player1, player2);
+
+   display(colors, positions);
    while (true)
    {
       rolled = dice();
-      switch (turn)
-      {
-      case 0:
-         cout << "Turn for the player " << colorToString(color1) << endl;
-         cout << "Rolled: " << rolled << endl;
-         player1 = movePlayer(player1, color1, rolled);
-         if (player1 == player2){
-            cout << colorToString(color1) << " eated " << colorToString(color2) << endl;
-            display(color1, color2, player1, player2);
-            player2 = -1;
-            player1 = movePlayer(player1, color1, ExtraMoves);
-         }          
-         break;
-      case 1:
-         cout << "Turn for the player " << colorToString(color2) << endl;
-         cout << "Rolled: " << rolled << endl;
-         player2 = movePlayer(player2, color2, rolled);
-         if (player1 == player2){
-            cout << colorToString(color1) << " eated " << colorToString(color2) << endl;
-            display(color1, color2, player1, player2);
-            player2 = -1;
-            player1 = movePlayer(player1, color1, ExtraMoves);
-         } 
-         break;
-      }
       if (rolled == 6)
          nSixes++;
+      cout << "Turn for the player " << colorToString(colors[turn]) << endl;
+      cout << "Rolled: " << rolled << endl;
+      positions[turn] = movePlayer(positions[turn], colors[turn], rolled);
 
-      display(color1, color2, player1, player2);
-      if (rolled != 6 && nSixes < 3){
-         turn = (turn + 1) % 2;
+      // Check if player eats another one
+      for (int i = 0; i < N_Players; i++){
+         if (i != turn && positions[turn] == positions[i] && positions[turn] != -1){
+            cout << colorToString(colors[turn]) << " eated " << colorToString(colors[i]) << endl;
+            positions[i] = -1;
+            display(colors, positions);
+            positions[turn] = movePlayer(positions[turn], colors[turn], ExtraMoves);
+         }
+      }
+
+      display(colors, positions);
+      if (rolled != 6 || nSixes == 3){
+         turn = (turn + 1) % N_Players;
          nSixes = 0;
       }
    }
-
    return 0;
 }
 
@@ -97,10 +91,10 @@ short dice()
    return num;
 }
 
-void display(tColor color1, tColor color2, short player1, short player2)
+void display(const tColorArray colors, const tPositionArray positions)
 {
    char c;
-
+   bool temp;
    // Space numbers...
    cout << endl
         << "       ";
@@ -135,12 +129,14 @@ void display(tColor color1, tColor color2, short player1, short player2)
    // Markers out of home...
    for (int pos = 0; pos < NUM_SPACES; pos++)
    {
-      if (pos == player1)
-         cout << colorToLetter(color1);
-      else if (pos == player2)
-         cout << colorToLetter(color2);
-      else
-         cout << " ";
+      temp = false;
+      for (int i = 0; i < N_Players; i++)
+         if (pos == positions[i]){
+            cout << colorToLetter(colors[i]);
+            temp = true;
+         }
+         if (!temp)
+            cout << " ";
    }
    cout << endl
         << "       ";
@@ -164,14 +160,13 @@ void display(tColor color1, tColor color2, short player1, short player2)
    for (int pos = 0; pos < NUM_SPACES; pos++)
    {
       c = ' ';
-      if (pos == playerStart(color1))
-      {
-         if (player1 == -1)
-            c = colorToLetter(color1);
+      for (int i = 0; i < N_Players; i++){
+         if (pos == playerStart(colors[i]))
+         {
+            if (positions[i] == -1)
+               c = colorToLetter(colors[i]);
+         }
       }
-      else if (pos == playerStart(color2))
-         if (player2 == -1)
-            c = colorToLetter(color2);
       cout << c;
    }
    cout << endl;
@@ -181,7 +176,7 @@ void display(tColor color1, tColor color2, short player1, short player2)
 
 tColor chooseColor()
 {
-   int option;
+   short option;
    tColor result;
    cout << "Choose the color for the player 1. Red, 2. Green, 3. Blue, 4. Yellow: ";
    cin >> option;
@@ -195,7 +190,7 @@ string colorToString(tColor color)
    string result;
    switch (color)
    {
-   case red:
+   case red:  
       result = "Red";
       break;
    case green:
@@ -258,7 +253,7 @@ short movePlayer(short player, tColor color, short rolled)
    if (player != -1)
    {
       next = (player + rolled) % 68;
-      if (playerStart(color) >= next && next > goal)
+      if (rolled > distance(goal, player)) 
       {
          cout << "Not a possible move (the goal is closer)!" << endl;
          next = player;
@@ -276,4 +271,13 @@ short movePlayer(short player, tColor color, short rolled)
       next = player;
 
    return next;
+}
+
+int distance(int x, int y){
+   int out; 
+   if ((x - y) > 0) 
+      out = x - y;
+   else 
+      out = 68 + x - y;
+   return out;
 }
