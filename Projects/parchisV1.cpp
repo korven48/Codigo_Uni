@@ -1,12 +1,15 @@
 /*
    SUBMITTED BY:  Lucas Vukotic
-   DATE:          October 29, 2020
+   DATE:          November 13, 2020
 */
 
 #include <iostream>
 #include <ctime>
 
 using namespace std;
+
+// ================= Toggle to DEBUG ====================
+bool DEBUG = false;
 
 enum tColor
 {
@@ -26,14 +29,13 @@ short dice();
 void display(tColor color1, tColor color2, short player1, short player2);
 short movePlayer(short player, tColor color, short rolled);
 
-bool DEBUG = true;
 const int NUM_SPACES = 68;
 
 int main()
 {
    const int ExtraMoves = 20;
-   short player1 = -1, player2 = -1, turn = 0, space1, space2, rolled, nSixes;
-   tColor color1, color2;
+   short player1 = -1, player2 = -1, current_player, turn = 0, space1, space2, rolled, nSixes;
+   tColor color1, color2, current_color;
 
    srand(time(NULL));
 
@@ -71,13 +73,15 @@ int main()
          } 
          break;
       }
-      if (rolled == 6)
-         nSixes++;
 
       display(color1, color2, player1, player2);
-      if (rolled != 6 && nSixes < 3){
+      if (rolled != 6){
          turn = (turn + 1) % 2;
          nSixes = 0;
+      } else if (nSixes < 2){
+         nSixes++;
+      } else {
+         player1 = -1;
       }
    }
 
