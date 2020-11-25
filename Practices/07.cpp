@@ -29,6 +29,7 @@ int main()
             i++;
             inputFile >> temp;
         }
+        inputFile.close();
         if (i < (Length - 1))
             cout << "Less than 20 numbers in the file! Exiting..." << endl;
         else
@@ -55,7 +56,6 @@ int main()
                     higher[i] = true;
                 else
                     higher[i] = false;
-                // cout << higher[i] << endl;
             }
 
             if (isGrowing(higher))
@@ -67,7 +67,6 @@ int main()
     else
         cout << "File not found! Exiting..." << endl;
 
-    inputFile.close();
     return 0;
 }
 
@@ -86,15 +85,16 @@ void display_seq(const tSequence seq)
 bool isTriangular(int n)
 {
     int i = 1, total = 0;
+    bool out = false;
     while (total < n)
     {
         total += i;
         i++;
     }
     if (total == n)
-        return true;
-    else
-        return false;
+        out = true;
+
+    return out;
 }
 
 void triangulars(const tSequence seq)
