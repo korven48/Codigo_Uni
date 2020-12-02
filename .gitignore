@@ -1,3 +1,12 @@
 *.exe
 *.json
 *.txt
+
+
+*.bak
+*.mti
+*.mpf
+*.wlf
+*.qdb
+*.qtl
+*.qpg

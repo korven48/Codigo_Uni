@@ -11,17 +11,17 @@ typedef string tProdName[MAX];
 typedef double tProdPrice[MAX];
 typedef int tProdUnits[MAX];
 
-bool load(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, int &counter);
+bool load(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, int& counter);
 void save(const tProdName prodName, const tProdPrice prodPrice, const tProdUnits prodUnits,
-		  int counter);
+	int counter);
 void initCart(tProdUnits cart);
-void newProd(string &name, double &price, int &units);
+void newProd(string& name, double& price, int& units);
 bool insert(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, string name,
-			double price, int units, int &counter);
+	double price, int units, int& counter);
 void print(const tProdName prodName, const tProdPrice prodPrice, const tProdUnits prodUnits,
-		   int counter);
+	int counter);
 void dispCart(const tProdUnits cart, int counter, const tProdName prodName,
-			  const tProdPrice prodPrice);
+	const tProdPrice prodPrice);
 void sell(tProdUnits prodUnits, tProdUnits cart);
 int menu();
 
@@ -54,7 +54,7 @@ int main()
 				newProd(name, price, units);
 				if (insert(prodName, prodPrice, prodUnits, name, price, units, counter))
 					cout << "Product added!" << endl
-						 << endl;
+					<< endl;
 				else
 					cout << "Too many porducts, not possible to add more." << endl;
 				break;
@@ -103,7 +103,7 @@ int menu()
 	return op;
 }
 
-bool load(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, int &counter)
+bool load(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, int& counter)
 {
 	bool ok = false;
 	ifstream file;
@@ -129,7 +129,7 @@ bool load(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, int &c
 }
 
 void save(const tProdName prodName, const tProdPrice prodPrice, const tProdUnits prodUnits,
-		  int counter)
+	int counter)
 {
 	ofstream outputFile("stock.txt");
 	if (outputFile.is_open())
@@ -139,6 +139,7 @@ void save(const tProdName prodName, const tProdPrice prodPrice, const tProdUnits
 			outputFile << prodName[i] << " " << prodPrice[i] << " " << prodUnits[i] << endl;
 		}
 		outputFile << "XXX" << endl;
+		//>>>>> CLOSE THE FILE!!!!! (INFO CAN BE LOST)
 	}
 }
 
@@ -149,7 +150,7 @@ void initCart(tProdUnits cart)
 		cart[i] = 0;
 }
 
-void newProd(string &name, double &price, int &units)
+void newProd(string& name, double& price, int& units)
 {
 	// 2
 	cout << "Product name: ";
@@ -161,7 +162,7 @@ void newProd(string &name, double &price, int &units)
 }
 
 bool insert(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, string name,
-			double price, int units, int &counter)
+	double price, int units, int& counter)
 {
 	bool ok = false;
 	if (counter < MAX)
@@ -176,20 +177,20 @@ bool insert(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, stri
 }
 
 void print(const tProdName prodName, const tProdPrice prodPrice, const tProdUnits prodUnits,
-		   int counter)
+	int counter)
 {
 	// 1
 	cout << "# " << setw(25) << left << "Product"
-		 << " Price" << ' ' << "Units" << endl;
+		<< " Price" << ' ' << "Units" << endl;
 	for (int i = 0; i < counter; i++)
 	{
 		cout << (i + 1) << ' ' << setw(25) << left << prodName[i] << setw(6) << right << prodPrice[i]
-			 << setw(6) << right << prodUnits[i] << endl;
+			<< setw(6) << right << prodUnits[i] << endl;
 	}
 }
 
 void dispCart(const tProdUnits cart, int counter, const tProdName prodName,
-			  const tProdPrice prodPrice)
+	const tProdPrice prodPrice)
 {
 	// 5
 	double total = 0;
@@ -198,7 +199,7 @@ void dispCart(const tProdUnits cart, int counter, const tProdName prodName,
 		if (cart[i])
 		{
 			cout << setw(16) << left << prodName[i] << setw(10) << left << prodPrice[i] << right << "x" << setw(5) << right << cart[i]
-				 << " =" << setw(10) << right << fixed << setprecision(2) << (prodPrice[i] * cart[i]) << endl;
+				<< " =" << setw(10) << right << fixed << setprecision(2) << (prodPrice[i] * cart[i]) << endl;
 			total += prodPrice[i] * cart[i];
 		}
 	}
