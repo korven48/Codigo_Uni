@@ -22,7 +22,7 @@ void print(const tProdName prodName, const tProdPrice prodPrice, const tProdUnit
 		   int counter);
 void dispCart(const tProdUnits cart, int counter, const tProdName prodName,
 			  const tProdPrice prodPrice);
-void sell(tProdUnits prodUnits, tProdUnits cart);
+void sell(tProdUnits prodUnits, tProdName prodName, tProdPrice prodPrice, int counter, tProdUnits cart);
 int menu();
 
 
@@ -72,7 +72,7 @@ int main()
 				dispCart(shoppingCart, counter, prodName, prodPrice);
 				break;
 			case 6:
-				// sell();
+				sell(prodUnits, prodName, prodPrice, counter, shoppingCart);
 				break;
 			}
 			cout << endl;
@@ -199,7 +199,8 @@ void sell(tProdUnits prodUnits, tProdName prodName, tProdPrice prodPrice, int co
 	ofstream outputFile("stock.txt");
 	if (outputFile.is_open()){
 		for (int i = 0; i < counter; i++){
-			outputFile << prodName[i] << " " << prodPrice[i] << " " << prodUnits[i] << endl;
+			if (prodUnits[i])
+				outputFile << prodName[i] << " " << prodPrice[i] << " " << prodUnits[i] << endl;
 		}
 		outputFile << "XXX" << endl;
 	}
