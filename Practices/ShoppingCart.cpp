@@ -25,11 +25,7 @@ void dispCart(const tProdUnits cart, int counter, const tProdName prodName,
 void sell(tProdUnits prodUnits, tProdUnits cart);
 int menu();
 
-
-
 void addToCart(tProdUnits prodUnits, tProdUnits cart);
-
-
 
 int main()
 {
@@ -57,7 +53,8 @@ int main()
 			case 2:
 				newProd(name, price, units);
 				if (insert(prodName, prodPrice, prodUnits, name, price, units, counter))
-					cout << "Product added!" << endl << endl;
+					cout << "Product added!" << endl
+						 << endl;
 				else
 					cout << "Too many porducts, not possible to add more." << endl;
 				break;
@@ -72,7 +69,8 @@ int main()
 				dispCart(shoppingCart, counter, prodName, prodPrice);
 				break;
 			case 6:
-				// sell();
+				sell(prodUnits, shoppingCart);
+				cout << "Sold!" << endl;
 				break;
 			}
 			cout << endl;
@@ -133,6 +131,15 @@ bool load(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, int &c
 void save(const tProdName prodName, const tProdPrice prodPrice, const tProdUnits prodUnits,
 		  int counter)
 {
+	ofstream outputFile("stock.txt");
+	if (outputFile.is_open())
+	{
+		for (int i = 0; i < counter; i++)
+		{
+			outputFile << prodName[i] << " " << prodPrice[i] << " " << prodUnits[i] << endl;
+		}
+		outputFile << "XXX" << endl;
+	}
 }
 
 void initCart(tProdUnits cart)
@@ -144,27 +151,27 @@ void initCart(tProdUnits cart)
 
 void newProd(string &name, double &price, int &units)
 {
+	// 2
 	cout << "Product name: ";
 	cin >> name;
 	cout << "Product price: ";
 	cin >> price;
 	cout << "Product units: ";
 	cin >> units;
-	// 2
 }
 
 bool insert(tProdName prodName, tProdPrice prodPrice, tProdUnits prodUnits, string name,
 			double price, int units, int &counter)
 {
 	bool ok = false;
-	if (counter < MAX){
+	if (counter < MAX)
+	{
 		prodName[counter] = name;
 		prodPrice[counter] = price;
 		prodUnits[counter] = units;
 		counter++;
 		ok = true;
 	}
-	
 	return ok;
 }
 
@@ -172,10 +179,12 @@ void print(const tProdName prodName, const tProdPrice prodPrice, const tProdUnit
 		   int counter)
 {
 	// 1
-	cout << "# " << setw(25) << left << "Product" << " Price" << ' ' << "Units" << endl;
-	for (int i = 0; i < counter; i++){
-		cout << (i + 1) << ' ' << setw(25) << left << prodName[i] << setw(6) << right << prodPrice[i] 
-			 << setw(6) << right << prodUnits[i] << endl; 
+	cout << "# " << setw(25) << left << "Product"
+		 << " Price" << ' ' << "Units" << endl;
+	for (int i = 0; i < counter; i++)
+	{
+		cout << (i + 1) << ' ' << setw(25) << left << prodName[i] << setw(6) << right << prodPrice[i]
+			 << setw(6) << right << prodUnits[i] << endl;
 	}
 }
 
@@ -184,40 +193,41 @@ void dispCart(const tProdUnits cart, int counter, const tProdName prodName,
 {
 	// 5
 	double total = 0;
-	for (int i = 0; i < counter; i++){
-		if (cart[i]){
+	for (int i = 0; i < counter; i++)
+	{
+		if (cart[i])
+		{
 			cout << setw(16) << left << prodName[i] << setw(10) << left << prodPrice[i] << right << "x" << setw(5) << right << cart[i]
-				 << " =" << setw(10) << right << (prodPrice[i] * cart[i]) << endl;
+				 << " =" << setw(10) << right << fixed << setprecision(2) << (prodPrice[i] * cart[i]) << endl;
 			total += prodPrice[i] * cart[i];
 		}
 	}
 	cout << "Total" << setw(39) << total << endl;
 }
 
-void sell(tProdUnits prodUnits, tProdName prodName, tProdPrice prodPrice, int counter, tProdUnits cart)
+void sell(tProdUnits prodUnits, tProdUnits cart)
 {
-	ofstream outputFile("stock.txt");
-	if (outputFile.is_open()){
-		for (int i = 0; i < counter; i++){
-			outputFile << prodName[i] << " " << prodPrice[i] << " " << prodUnits[i] << endl;
-		}
-		outputFile << "XXX" << endl;
+	for (int i = 0; i < MAX; i++)
+	{
+		prodUnits[i] -= cart[i];
+		cart[i] = 0;
 	}
-	initCart(cart);
 }
 
-void addToCart(tProdUnits prodUnits, tProdUnits cart){
+void addToCart(tProdUnits prodUnits, tProdUnits cart)
+{
 	int num, units;
 	cout << "Product Number: ";
 	cin >> num;
 	num--;
 	cout << "Units to buy: ";
-	cin >> units;	
-	while (units > prodUnits[num]){
+	cin >> units;
+	while (units > prodUnits[num])
+	{
 		cout << "Units available: " << prodUnits[num] << " Try again!" << endl;
 		cout << "Units to buy: ";
 		cin >> units;
 	}
-	prodUnits[num] -= units;
+	// prodUnits[num] -= units;
 	cart[num] += units;
 }
