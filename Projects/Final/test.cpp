@@ -9,6 +9,6 @@ using namespace std;
 
 int main()
 {
-    cout << "\x1b[31;107m" << "Nabo" << endl;
+    cout << (-1 % 10) << endl;
     return 0;
 }
