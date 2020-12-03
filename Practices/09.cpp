@@ -103,7 +103,6 @@ int findMax(const tCuantity grams, const tCuantity calories, int counter){
     return index;
 }
 
-
 void save(string filename, const tName names, const tCuantity grams, const tCuantity calories, int counter){
     ofstream outputFile(filename);
     for(int i = 0; i < counter; i++){
