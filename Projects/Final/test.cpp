@@ -4,11 +4,14 @@
 */
 
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
 int main()
 {
-    cout << (-1 % 10) << endl;
+    srand(time(NULL));
+    cout << rand() << endl;
+    cout << rand() << endl;
     return 0;
 }
