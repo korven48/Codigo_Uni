@@ -54,7 +54,7 @@ void initialize(tPlayers players, int& numPlayer, tSpaces lane1, tSpaces lane2);
 bool DEBUG = true;
 
 int main(){
-
+   
 }
 
 void display(const tPlayers players, const tSpaces street1, const tSpaces street2) {
