@@ -15,6 +15,9 @@
 
 using namespace std;
 
+const string FileName = "test5.txt";
+const bool Debug = true;
+
 enum tColor
 {
    Yellow = 0,
@@ -41,10 +44,10 @@ char colorToLetter(tColor color);
 bool allAtGoal(const tMarkers player);
 bool isSafe(int pos);
 bool bridge(const tSpaces lane1, const tSpaces lane2, int space);
-bool process5(tPlayers players, int playerTurn, int& award, bool& nextPlayer, tSpaces lane1, tSpaces lane2);
-bool process6(tPlayers players, int playerTurn, int& award, bool& nextPlayer, int& sixes, int& lastMarkerMoved, int& roll, tSpaces lane1, tSpaces lane2);
-bool play(tPlayers players, int playerTurn, int& award,bool& end, int& sixes, int& lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
-bool canMove(const tPlayers players, int marker, int& space, int playerTurn, int roll, const tSpaces lane1, const tSpaces lane2);
+bool process5(tPlayers players, tColor playerTurn, int& award, bool& nextPlayer, tSpaces lane1, tSpaces lane2);
+bool process6(tPlayers players, tColor playerTurn, int& award, bool& nextPlayer, int& sixes, int& lastMarkerMoved, int& roll, tSpaces lane1, tSpaces lane2);
+bool play(tPlayers players, tColor playerTurn, int& award,bool& end, int& sixes, int& lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
+bool canMove(const tPlayers players, int marker, int& space, tColor playerTurn, int roll, const tSpaces lane1, const tSpaces lane2);
 
 short startSpace(tColor color);
 short zanataSpace(tColor color);
@@ -57,9 +60,9 @@ int secondAt(const tMarkers player, int space);
 int distance(int x, int y);
 int colorToPlayer(tColor color); 
 
-void openBridge(tPlayers players, int playerTurn, int space, int space2, int& award, int& lastMarkerMoved, tSpaces lane1, tSpaces lane2);
-void move(tPlayers players, int playerTurn, int marker, int space, int& award, tSpaces lane1, tSpaces lane2);
-void markerOut(tPlayers players, int playerTurn, tSpaces lane1, tSpaces lane2);
+void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int& award, int& lastMarkerMoved, tSpaces lane1, tSpaces lane2);
+void move(tPlayers players, tColor playerTurn, int marker, int space, int& award, tSpaces lane1, tSpaces lane2);
+void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2);
 void toHome(tPlayers players,int space,tSpaces lane1,tSpaces lane2);
 void display(const tPlayers players, const tSpaces lane1, const tSpaces lane2);
 void initialize(tPlayers players, tColor& playerTurn, tSpaces lane1, tSpaces lane2);
@@ -124,10 +127,22 @@ bool isSafe(int pos)
    return result;
 }
 bool bridge(const tSpaces lane1, const tSpaces lane2, int space);
-bool process5(tPlayers players, int playerTurn, int& award, bool& nextPlayer, tSpaces lane1, tSpaces lane2);
-bool process6(tPlayers players, int playerTurn, int& award, bool& nextPlayer, int& sixes, int& lastMarkerMoved, int& roll, tSpaces lane1, tSpaces lane2);
-bool play(tPlayers players, int playerTurn, int& award,bool& end, int& sixes, int& lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
-bool canMove(const tPlayers players, int marker, int& space, int playerTurn, int roll, const tSpaces lane1, const tSpaces lane2);
+bool process5(tPlayers players, tColor playerTurn, int& award, bool& nextPlayer, tSpaces lane1, tSpaces lane2){
+   // Work in progress
+   bool out = false;
+   int start, marker;
+   start = startSpace(playerTurn);
+   if (lane2[start] == None) {
+      marker = firstAt(players[playerTurn], -1);
+   } else if (lane2[start] == None){
+
+   } else{
+
+   }
+}
+bool process6(tPlayers players, tColor playerTurn, int& award, bool& nextPlayer, int& sixes, int& lastMarkerMoved, int& roll, tSpaces lane1, tSpaces lane2);
+bool play(tPlayers players, tColor playerTurn, int& award,bool& end, int& sixes, int& lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
+bool canMove(const tPlayers players, int marker, int& space, tColor playerTurn, int roll, const tSpaces lane1, const tSpaces lane2);
 
 short startSpace(tColor color)
 {
@@ -163,7 +178,6 @@ int howMany(const tMarkers player, int space){
          out++;
    return out;
 }
-
 int firstAt(const tMarkers player, int space){
    int out = -1;
    bool found = false;
@@ -175,7 +189,6 @@ int firstAt(const tMarkers player, int space){
    }
    return out;
 }
-
 int secondAt(const tMarkers player, int space){
    int out = -1;
    for (int i = 0; i < NUM_MARKERS; i++)
@@ -183,14 +196,13 @@ int secondAt(const tMarkers player, int space){
          out = i;
    return out;
 }
-
 int distance(int x, int y);
 int colorToPlayer(tColor color){
    return int(color);
 }
 
-void openBridge(tPlayers players, int playerTurn, int space, int space2, int& award, int& lastMarkerMoved, tSpaces lane1, tSpaces lane2);
-void move(tPlayers players, int playerTurn, int marker, int space, int& award, tSpaces lane1, tSpaces lane2);
+void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int& award, int& lastMarkerMoved, tSpaces lane1, tSpaces lane2);
+void move(tPlayers players, tColor playerTurn, int marker, int space, int& award, tSpaces lane1, tSpaces lane2);
 void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2){
    short space;
    bool found = false;
@@ -207,7 +219,12 @@ void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2
    lane1[space] = playerTurn;
 }
 
-void toHome(tPlayers players,int space,tSpaces lane1,tSpaces lane2);
+void toHome(tPlayers players, int space, tSpaces lane1, tSpaces lane2){
+   tColor player = lane2[space];
+   int marker = secondAt(players[player], space);
+   players[player][marker] = -1;
+   lane2[space] = None;
+}
 void display(const tPlayers players, const tSpaces lane1, const tSpaces lane2) {
    int space, marker, jug;
 
@@ -416,8 +433,6 @@ void initialize(tPlayers players, tColor& playerTurn, tSpaces lane1, tSpaces lan
    playerTurn = tColor(temp);
    setColor(Gray);
 }
-
-void setColor(tColor color);
 void initColors() {
 #ifdef _WIN32
    for (DWORD stream : {STD_OUTPUT_HANDLE, STD_ERROR_HANDLE}) {
