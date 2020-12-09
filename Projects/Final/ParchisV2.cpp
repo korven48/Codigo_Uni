@@ -4,9 +4,10 @@
 */
 
 #include <iostream>
-#include<cstdlib>
-#include<ctime>
-#include<limits>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -60,6 +61,7 @@ int secondAt(const tMarkers player, int space);
 int distance(int x, int y);
 int colorToPlayer(tColor color); 
 
+void load(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lane2);
 void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int& award, int& lastMarkerMoved, tSpaces lane1, tSpaces lane2);
 void move(tPlayers players, tColor playerTurn, int marker, int space, int& award, tSpaces lane1, tSpaces lane2);
 void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2);
@@ -75,14 +77,22 @@ int main()
    tPlayers players;
    tSpaces lane1, lane2;
    tColor playerTurn;
+   bool forcedMove = false, passTurn = true, reward = false, end = false;
 
    initColors();
    initialize(players, playerTurn, lane1, lane2);
+   if (Debug)
+      load(players, playerTurn, lane1, lane2);
    display(players, lane1, lane2);
 
-   setColor(playerTurn);
-   cout << "The " << colorToString(playerTurn) << " player starts" << endl;
-   pause(); 
+   while (!end) {
+      setColor(playerTurn);
+      cout << "The " << colorToString(playerTurn) << " player starts" << endl;
+      pause();
+
+      if (passTurn)
+         playerTurn = tColor((int(playerTurn) + 1) % NUM_PLAYERS);
+   }
 
    return 0;
 }
@@ -139,6 +149,7 @@ bool process5(tPlayers players, tColor playerTurn, int& award, bool& nextPlayer,
    } else{
 
    }
+   return out;
 }
 bool process6(tPlayers players, tColor playerTurn, int& award, bool& nextPlayer, int& sixes, int& lastMarkerMoved, int& roll, tSpaces lane1, tSpaces lane2);
 bool play(tPlayers players, tColor playerTurn, int& award,bool& end, int& sixes, int& lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
@@ -168,7 +179,9 @@ short startSpace(tColor color)
 short zanataSpace(tColor color){
     return startSpace(color) - 5;
 }
-short dice();
+short dice(){
+
+}
 short movePlayer(short player, tColor color, short rolled);
 
 int howMany(const tMarkers player, int space){
@@ -201,6 +214,27 @@ int colorToPlayer(tColor color){
    return int(color);
 }
 
+void load(tPlayers players, tColor& playerTurn, tSpaces lane1, tSpaces lane2) {
+   ifstream file;
+   int player, space;
+
+   file.open(FileName);
+   if (file.is_open()) {
+      for (int i = 0; i < NUM_PLAYERS; i++)
+         for (int f = 0; f < NUM_MARKERS; f++) {
+            file >> space;
+            players[i][f] = space;
+            if ((space >= 0) && (space < NUM_SPACES))
+               if (lane1[space] == None)
+                  lane1[space] = tColor(i);
+               else
+                  lane2[space] = tColor(i);
+         }
+      file >> player;
+      playerTurn = tColor(player);
+      file.close();
+   }
+}
 void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int& award, int& lastMarkerMoved, tSpaces lane1, tSpaces lane2);
 void move(tPlayers players, tColor playerTurn, int marker, int space, int& award, tSpaces lane1, tSpaces lane2);
 void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2){
@@ -414,7 +448,8 @@ void setColor(tColor color) {
       break;
    }
 }
-void initialize(tPlayers players, tColor& playerTurn, tSpaces lane1, tSpaces lane2){
+void initialize(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lane2){
+   ofstream outputFile("debug.txt");
    int temp;
 
    srand(time(NULL));
@@ -429,7 +464,10 @@ void initialize(tPlayers players, tColor& playerTurn, tSpaces lane1, tSpaces lan
       lane2[i] = None;
    }
 
-   temp = rand() % NUM_PLAYERS;
+   temp = rand();
+   outputFile << temp << endl;
+   temp %= NUM_PLAYERS;
+   outputFile << temp << endl;
    playerTurn = tColor(temp);
    setColor(Gray);
 }
