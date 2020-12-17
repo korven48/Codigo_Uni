@@ -1,11 +1,12 @@
 /*
    SUBMITTED BY:  Lucas Vukotic
-   DATE:          Dicember 12, 2020
+   DATE:          Dicember 9, 2020
 */
 
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <cassert>
 
 using namespace std;
 
@@ -22,7 +23,6 @@ void insertStudent(tNames names, tMarks marks, int &counter);
 void locate(const tNames names, const tMarks marks, int counter);
 void deleteStudent(tNames names, tMarks marks, int &counter);
 
-
 int main()
 {
     tNames names;
@@ -30,23 +30,25 @@ int main()
     int counter = 0, option;
     load(names, marks, counter);
     option = menu();
-    while (option != 0){
-        switch (option){
-            case 1:
-                cout << "Counter: " << counter << endl;
-                display(names, marks, counter);
-                break;
-            case 2:
-                insertStudent(names, marks, counter);
-                break;
-            case 3:
-                locate(names, marks, counter);
-                break;
-            case 4:
-                deleteStudent(names, marks, counter);
-                break;
-            case 0:
-                break;
+    while (option != 0)
+    {
+        switch (option)
+        {
+        case 1:
+            cout << "Counter: " << counter << endl;
+            display(names, marks, counter);
+            break;
+        case 2:
+            insertStudent(names, marks, counter);
+            break;
+        case 3:
+            locate(names, marks, counter);
+            break;
+        case 4:
+            deleteStudent(names, marks, counter);
+            break;
+        case 0:
+            break;
         }
         option = menu();
     }
@@ -54,23 +56,31 @@ int main()
     return 0;
 }
 
-void load(tNames names, tMarks marks, int &counter){
+void load(tNames names, tMarks marks, int &counter)
+{
     ifstream inputFile(FileName);
     string name;
     double mark;
-    getline(inputFile, name);
-    while (name != "XXX"){
-        inputFile >> mark;
-        inputFile.get();
-        names[counter] = name;
-        marks[counter] = mark;
-        counter++;
+    if (!inputFile.is_open())
+        cout << "File not found..." << endl;
+    else
+    {
         getline(inputFile, name);
+        while (name != "XXX")
+        {
+            inputFile >> mark;
+            inputFile.get();
+            names[counter] = name;
+            marks[counter] = mark;
+            counter++;
+            getline(inputFile, name);
+        }
+        inputFile.close();
     }
-    inputFile.close();
-}   
+}
 
-int menu(){
+int menu()
+{
     int option;
     cout << endl;
     cout << "1 - Display the list" << endl;
@@ -81,25 +91,34 @@ int menu(){
     cout << "Your option: ";
     cin >> option;
 
-    if (option > 4 || option < 0){
-        cout << endl << "Invalid option!" << endl;
+    if (option > 4 || option < 0)
+    {
+        cout << endl
+             << "Invalid option!" << endl;
         option = menu();
     }
     return option;
 }
 
-void display(const tNames names, const tMarks marks, int counter){
-    for (int i = 0; i < counter; i++){
-        cout << setw(3) << right << (i + 1) << "   " << setw(30) << left << names[i] 
+void display(const tNames names, const tMarks marks, int counter)
+{
+    for (int i = 0; i < counter; i++)
+    {
+        cout << setw(3) << right << (i + 1) << "   " << setw(30) << left << names[i]
              << right << fixed << setprecision(2) << marks[i] << endl;
     }
 }
 
-void insertStudent(tNames names, tMarks marks, int &counter){
+void insertStudent(tNames names, tMarks marks, int &counter)
+{
     int pos;
     string name;
     double mark;
-    if (counter < MAX){
+    if (counter < MAX)
+    {
+        // I prefer the if statement, but
+        assert(counter < MAX);
+        // it was proposed in the pdf
         cout << "Student's name: ";
         cin >> name;
         cout << "Student's grade: ";
@@ -107,40 +126,47 @@ void insertStudent(tNames names, tMarks marks, int &counter){
         cout << "Position in the list [1.." << counter << "]: ";
         cin >> pos;
         pos--;
-        for (int i = counter; i >= pos; i--){
+        for (int i = counter; i >= pos; i--)
+        {
             names[i + 1] = names[i];
             marks[i + 1] = marks[i];
         }
         names[pos] = name;
         counter++;
-    } else
+    }
+    else
     {
         cout << "List is full" << endl;
     }
 }
 
-void locate(const tNames names, const tMarks marks, int counter){
+void locate(const tNames names, const tMarks marks, int counter)
+{
     string match;
     cout << "Student's name: ";
     cin.get();
     getline(cin, match);
     int pos = -1;
-    for (int i = 0; i < counter; i++){
+    for (int i = 0; i < counter; i++)
+    {
         if (names[i] == match)
-            pos = i; 
+            pos = i;
     }
-    if (pos != -1) 
+    if (pos != -1)
         cout << "Found in position " << (pos + 1) << endl;
     else
         cout << "Not found" << endl;
 }
 
-void deleteStudent(tNames names, tMarks marks, int &counter){
+void deleteStudent(tNames names, tMarks marks, int &counter)
+{
     int pos;
     cout << "Position of the element to delete [1.." << counter << "]: ";
     cin >> pos;
+    assert(pos >= 1 && pos <= counter);
     pos--;
-    for (int i = pos; i < counter; i++){
+    for (int i = pos; i < counter; i++)
+    {
         names[i] = names[i + 1];
         marks[i] = marks[i + 1];
     }
