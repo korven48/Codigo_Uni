@@ -229,6 +229,6 @@ void addToCart(tProdUnits prodUnits, tProdUnits cart)
 		cout << "Units to buy: ";
 		cin >> units;
 	}
-	// prodUnits[num] -= units;
 	cart[num] += units;
 }
+ 
