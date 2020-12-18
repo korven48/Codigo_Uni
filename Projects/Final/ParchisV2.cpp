@@ -16,7 +16,7 @@
 
 using namespace std;
 
-const string FileName = "test5.txt"; // test5 canMove   | .txt
+const string FileName = "canMove.txt"; // test5 canMove   | .txt
 const bool Debug = true;
 const int Goal = 108;
 
@@ -58,7 +58,6 @@ int nextSpace(int position, tColor playerTurn);
 int howMany(const tMarkers player, int space);
 int firstAt(const tMarkers player, int space);
 int secondAt(const tMarkers player, int space);
-int distance(int x, int y);
 int colorToPlayer(tColor color);
 
 void load(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lane2);
@@ -77,7 +76,7 @@ int main()
    tPlayers players;
    tSpaces lane1, lane2;
    tColor playerTurn;
-   bool forcedMove = false, passTurn = true, end = false;
+   bool forcedMove = false, passTurn = true, end = false, played;
    int rolled, reward = false, next;
 
    initColors();
@@ -86,28 +85,31 @@ int main()
       load(players, playerTurn, lane1, lane2);
    display(players, lane1, lane2);
 
+   setColor(playerTurn);
+   cout << "The " << colorToString(playerTurn) << " player starts" << endl;
    while (!end)
    {
+      played = false;
       setColor(playerTurn);
-      cout << "The " << colorToString(playerTurn) << " player starts" << endl;
+      cout << "Turn for the " << colorToString(playerTurn) << " player" << endl;
 
       rolled = dice();
       cin.get();
-      cout << "Dice rolled " << rolled << endl;
+      cout << "A " << rolled << " is rolled" << endl;
       if (rolled == 5){
-         bool played;
          played = process5(players, playerTurn, reward, passTurn, lane1, lane2); 
-         if (played){
+         if (played)
             cout << "A marker gets out of home (reward: " << reward << ", passTurn: " << passTurn << ")" << endl;
-         } else{
-            cout << "Not Played" << endl;
-            for (int m = 0; m < NUM_MARKERS ; m++) {
-               cout << m + 1 << ":";
-               if (canMove(players, m, next, playerTurn, rolled, lane1, lane2))
-                  cout << "Can go to the space" << next << endl;
-               else
-                  cout << "Can not be moved" << endl;
-            }
+         else
+            cout << "No marker can get out of home" << endl;
+      }
+      if (!played){
+         for (int m = 0; m < NUM_MARKERS ; m++) {
+            cout << m + 1 << ": ";
+            if (canMove(players, m, next, playerTurn, rolled, lane1, lane2))
+               cout << "Can go to the space " << next << endl;
+            else
+               cout << "Can not be moved" << endl;
          }
       }
       if (rolled == 0)
@@ -154,6 +156,8 @@ bool allAtGoal(const tMarkers player);
 bool isSafe(int pos)
 {
    bool result = false;
+   if (pos > 100)          // Zanata (maybe not correct)
+      result = true;
    pos %= 17;
    if (pos == 0 || pos == 5 || pos == 12)
    {
@@ -164,8 +168,10 @@ bool isSafe(int pos)
 }
 bool bridge(const tSpaces lane1, const tSpaces lane2, int space){
    bool out;
-   out = space >= 0 && space <= 67;                // Space must be in the street
-   out = out && lane1[space] == lane2[space];      // If two markers of the same player in the space are
+   // out = space >= 0 && space <= 67;                // Space must be in the street
+   out = lane1[space] == lane2[space]; // && out     // If two markers of the same player in the space are
+   out = out && (lane1[space] != None);              // Those are real markers not space
+
    return out;
 }
 bool process5(tPlayers players, tColor playerTurn, int &reward, bool &nextPlayer, tSpaces lane1, tSpaces lane2)
@@ -196,20 +202,26 @@ bool play(tPlayers players, tColor playerTurn, int &award, bool &end, int &sixes
 bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, int rolled, const tSpaces lane1, const tSpaces lane2){
    bool canmove = true, lastMove = false;
    int position = players[playerTurn][marker];
-   for (int i = 0; i < rolled; i++){
-      if ((i + 1) == rolled)
-         lastMove = true;
-      if (lastMove && lane1[position] != None && lane2[position] != None){ // Last move is a full of players
-         canmove = false;
+   if (position != -1){
+      for (int i = 0; i < rolled; i++){
+         position = nextSpace(position, playerTurn);        // No need to check first position
+         if ((i + 1) == rolled)
+            lastMove = true;
+         if (lastMove && lane1[position] != None && lane2[position] != None){ // Last move is a full of players
+            canmove = false;
+            // cout << "Last space full" << endl; // Debug
+         }
+         if (position == Goal && !lastMove)
+            canmove = false;
+         if (bridge(lane1, lane2, position) && isSafe(position)){
+            // cout << "Bridge found" << endl;  // Debug
+            canmove = false;
+         }
       }
-      if (position == Goal && !lastMove)
-         canmove = false;
-      if (bridge(lane1, lane2, position))
-         canmove = false;
-      position = nextSpace(position, playerTurn);
-   }
-   if (canmove)
-      space = position;
+      if (canmove)
+         space = position;
+   } else
+      canmove = false;           // If player at home it can´t move (process 5 would have catch it)
    return canmove;
 }
 
@@ -293,7 +305,6 @@ int secondAt(const tMarkers player, int space)
          out = i;
    return out;
 }
-int distance(int x, int y);
 int colorToPlayer(tColor color)
 {
    return int(color);
@@ -538,20 +549,20 @@ void setColor(tColor color)
    switch (color)
    {
    case Yellow:
-      cout << "\x1b[33;107m";
+      cout << "\x1b[33;40m";
       break;
    case Blue:
-      cout << "\x1b[34;107m";
+      cout << "\x1b[34;40m";
       break;
    case Red:
-      cout << "\x1b[31;107m";
+      cout << "\x1b[31;40m";
       break;
    case Green:
-      cout << "\x1b[32;107m";
+      cout << "\x1b[32;40m";
       break;
    case Gray:
    case None:
-      cout << "\x1b[90;107m";
+      cout << "\x1b[97;40m";    // \x1b[90;107m
       break;
    }
 }
@@ -603,3 +614,4 @@ void pause()
    cout << "Press Enter to continue...";
    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
+

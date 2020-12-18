@@ -9,31 +9,34 @@ const string FileName = "stock.txt";
 const int DIM = 50;
 const int NP = 20; // Number of purchases
 
-struct tProduct {
-    string name;
-    double price;
-    int units;
+struct tProduct
+{
+	string name;
+	double price;
+	int units;
 	int code;
 };
 typedef tProduct tProdArray[DIM];
 
-struct tItem {
+struct tItem
+{
 	int code;
 	int units;
 };
 
 typedef tItem tItemArray[NP];
 
-struct tCart {
+struct tCart
+{
 	tItemArray purchases;
 	int count = 0;
 };
 
-struct tStock{
-    tProdArray products;
-    int count = 0;
+struct tStock
+{
+	tProdArray products;
+	int count = 0;
 };
-
 
 bool load(tStock &stock);
 void save(const tStock &stock);
@@ -54,7 +57,6 @@ int main()
 	tCart cart;
 	int option;
 
-	
 	if (!load(stock))
 		cout << "File not found! Exiting..." << endl;
 	else
@@ -70,7 +72,8 @@ int main()
 				break;
 			case 2:
 				if (addProduct(stock))
-					cout << "Product added!" << endl << endl;
+					cout << "Product added!" << endl
+						 << endl;
 				else
 					cout << "Too many porducts, not possible to add more." << endl;
 				break;
@@ -116,9 +119,8 @@ int menu()
 	return op;
 }
 
-
-
-bool load(tStock &stock){
+bool load(tStock &stock)
+{
 	bool ok = false;
 	ifstream file;
 	string name;
@@ -145,7 +147,9 @@ bool load(tStock &stock){
 
 	return ok;
 }
-void save(const tStock &stock){
+
+void save(const tStock &stock)
+{
 	ofstream outputFile("stock.txt");
 	if (outputFile.is_open())
 	{
@@ -153,14 +157,16 @@ void save(const tStock &stock){
 		{
 			outputFile << stock.products[i].code << endl
 					   << stock.products[i].name << endl
-					   << stock.products[i].price << endl 
+					   << stock.products[i].price << endl
 					   << stock.products[i].units << endl;
 		}
 		outputFile << -1 << endl;
 		outputFile.close();
 	}
 }
-tProduct readProduct(){
+
+tProduct readProduct()
+{
 	tProduct product;
 	cout << "Product code: ";
 	cin >> product.code;
@@ -173,40 +179,52 @@ tProduct readProduct(){
 
 	return product;
 }
-bool addProduct(tStock &stock){
+
+bool addProduct(tStock &stock)
+{
 	bool added = false;
 	tProduct product;
 	product = readProduct();
-	if (stock.count < DIM){
+	if (stock.count < DIM)
+	{
 		stock.products[stock.count] = product;
 		added = true;
 		stock.count++;
 	}
 	return added;
 }
-void display(const tStock &stock){
+
+void display(const tStock &stock)
+{
 	// 1
 	cout << " # " << setw(4) << left << "Code"
-		<< setw(28 + 1) << left << "    Product" << " Price" << " Units" << endl;
+		 << setw(28 + 1) << left << "    Product"
+		 << " Price"
+		 << " Units" << endl;
 	for (int i = 0; i < stock.count; i++)
 	{
-		cout << setw(2) << right << (i + 1) << ' ' << setw(7) << left << stock.products[i].code << ' ' 
-		     << setw(25) << left << stock.products[i].name << ' '  
-			 << setprecision(2) << fixed << setw(8) << left << stock.products[i].price 
+		cout << setw(2) << right << (i + 1) << ' ' << setw(7) << left << stock.products[i].code << ' '
+			 << setw(25) << left << stock.products[i].name << ' '
+			 << setprecision(2) << fixed << setw(8) << left << stock.products[i].price
 			 << stock.products[i].units << endl;
 	}
 }
-int find(const tStock &stock, int code){
+
+int find(const tStock &stock, int code)
+{
 	int index = -1;
 
-	for (int i = 0; i < stock.count; i++){
+	for (int i = 0; i < stock.count; i++)
+	{
 		if (stock.products[i].code == code)
 			index = i;
 	}
 
 	return index;
 }
-tItem readItem(const tStock &stock){
+
+tItem readItem(const tStock &stock)
+{
 	tItem item;
 	int number, units;
 	cout << "Please enter product's number: ";
@@ -219,7 +237,9 @@ tItem readItem(const tStock &stock){
 	item.units = units;
 	return item;
 }
-bool addToCart(tCart &cart, const tStock &stock){
+
+bool addToCart(tCart &cart, const tStock &stock)
+{
 	tItem item;
 	int itemIndex;
 	bool added = true;
@@ -228,18 +248,22 @@ bool addToCart(tCart &cart, const tStock &stock){
 	itemIndex = find(stock, item.code);
 	if (item.units > stock.products[itemIndex].units)
 		added = false;
-	else{
+	else
+	{
 		cart.purchases[cart.count] = item;
 		cart.count++;
 	}
 	return added;
 }
-void displayCart(const tCart cart, const tStock &stock){
+
+void displayCart(const tCart cart, const tStock &stock)
+{
 	int itemIndex;
 	double total = 0, unitsPrice;
 	tItem item; // item
-	tProduct product; 
-	for(int i = 0; i < cart.count; i++){
+	tProduct product;
+	for (int i = 0; i < cart.count; i++)
+	{
 		item = cart.purchases[i];
 		itemIndex = find(stock, item.code);
 		product = stock.products[itemIndex];
@@ -247,17 +271,16 @@ void displayCart(const tCart cart, const tStock &stock){
 		unitsPrice = item.units * product.price;
 		total += unitsPrice;
 
-		cout << setw(26) << left << product.name 
-			 << right << product.price << " x" 
-			 << setw(5) << right << item.units << " =" 
+		cout << setw(26) << left << product.name
+			 << right << product.price << " x"
+			 << setw(5) << right << item.units << " ="
 			 << setw(9) << right << fixed << setprecision(2) << unitsPrice << endl;
 	}
 	cout << setw(43) << left << "Total" << right << fixed << setprecision(2) << total << endl;
 }
-void sellCart(tStock &stock, tCart &cart){
-	// ----------------------------------------------------------------------------------
-	//					  If stock units is 0 probably should disapear
-	// ----------------------------------------------------------------------------------
+
+void sellCart(tStock &stock, tCart &cart)
+{
 	for (int i = 0; i < cart.count; i++)
 	{
 		int itemIndex;
