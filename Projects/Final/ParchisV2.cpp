@@ -16,7 +16,7 @@
 
 using namespace std;
 
-const string FileName = "canMove.txt"; // test5 canMove   | .txt
+const string FileName = "test6.txt"; // test5 canMove test6 | .txt
 const bool Debug = true;
 const int Goal = 108;
 
@@ -44,9 +44,9 @@ char colorToLetter(tColor color);
 bool allAtGoal(const tMarkers player);
 bool isSafe(int pos);
 bool bridge(const tSpaces lane1, const tSpaces lane2, int space);
-bool process5(tPlayers players, tColor playerTurn, int &award, bool &nextPlayer, tSpaces lane1, tSpaces lane2);
-bool process6(tPlayers players, tColor playerTurn, int &award, bool &nextPlayer, int &sixes, int &lastMarkerMoved, int &roll, tSpaces lane1, tSpaces lane2);
-bool play(tPlayers players, tColor playerTurn, int &award, bool &end, int &sixes, int &lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
+bool process5(tPlayers players, tColor playerTurn, int &reward, bool &nextPlayer, tSpaces lane1, tSpaces lane2);
+bool process6(tPlayers players, tColor playerTurn, int &reward, bool &nextPlayer, int &sixes, int &lastMarkerMoved, int &roll, tSpaces lane1, tSpaces lane2);
+bool play(tPlayers players, tColor playerTurn, int &reward, bool &end, int &sixes, int &lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
 bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, int roll, const tSpaces lane1, const tSpaces lane2);
 
 short startSpace(tColor color);
@@ -61,8 +61,8 @@ int secondAt(const tMarkers player, int space);
 int colorToPlayer(tColor color);
 
 void load(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lane2);
-void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int &award, int &lastMarkerMoved, tSpaces lane1, tSpaces lane2);
-void move(tPlayers players, tColor playerTurn, int marker, int space, int &award, tSpaces lane1, tSpaces lane2);
+void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int &reward, int &lastMarkerMoved, tSpaces lane1, tSpaces lane2);
+void move(tPlayers players, tColor playerTurn, int marker, int space, int &reward, tSpaces lane1, tSpaces lane2);
 void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2);
 void toHome(tPlayers players, int space, tSpaces lane1, tSpaces lane2);
 void display(const tPlayers players, const tSpaces lane1, const tSpaces lane2);
@@ -77,7 +77,7 @@ int main()
    tSpaces lane1, lane2;
    tColor playerTurn;
    bool forcedMove = false, passTurn = true, end = false, played;
-   int rolled, reward = false, next;
+   int rolled, reward = false, next, marker;
 
    initColors();
    initialize(players, playerTurn, lane1, lane2);
@@ -104,12 +104,25 @@ int main()
             cout << "No marker can get out of home" << endl;
       }
       if (!played){
+         bool possibleMove = false;
          for (int m = 0; m < NUM_MARKERS ; m++) {
             cout << m + 1 << ": ";
-            if (canMove(players, m, next, playerTurn, rolled, lane1, lane2))
+            if (canMove(players, m, next, playerTurn, rolled, lane1, lane2)){
                cout << "Can go to the space " << next << endl;
+               possibleMove = true;
+            }
             else
                cout << "Can not be moved" << endl;
+         }
+         if (possibleMove){
+            cout << "Marker to move: ";
+            cin >> marker;
+            cin.get();
+            marker--;
+            if (canMove(players, marker, next, playerTurn, rolled, lane1, lane2)){
+               move(players, playerTurn, marker, next, reward, lane1, lane2);
+               cout << "Reward: " << reward << endl;
+            }
          }
       }
       if (rolled == 0)
@@ -197,8 +210,8 @@ bool process5(tPlayers players, tColor playerTurn, int &reward, bool &nextPlayer
    }
    return out;
 }
-bool process6(tPlayers players, tColor playerTurn, int &award, bool &nextPlayer, int &sixes, int &lastMarkerMoved, int &roll, tSpaces lane1, tSpaces lane2);
-bool play(tPlayers players, tColor playerTurn, int &award, bool &end, int &sixes, int &lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
+bool process6(tPlayers players, tColor playerTurn, int &reward, bool &nextPlayer, int &sixes, int &lastMarkerMoved, int &roll, tSpaces lane1, tSpaces lane2);
+bool play(tPlayers players, tColor playerTurn, int &reward, bool &end, int &sixes, int &lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
 bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, int rolled, const tSpaces lane1, const tSpaces lane2){
    bool canmove = true, lastMove = false;
    int position = players[playerTurn][marker];
@@ -213,6 +226,9 @@ bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, 
          }
          if (position == Goal && !lastMove)
             canmove = false;
+         if (bridge(lane1, lane2, position) && lastMove){
+            canmove = false;
+         }
          if (bridge(lane1, lane2, position) && isSafe(position)){
             // cout << "Bridge found" << endl;  // Debug
             canmove = false;
@@ -334,8 +350,35 @@ void load(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lane2)
       file.close();
    }
 }
-void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int &award, int &lastMarkerMoved, tSpaces lane1, tSpaces lane2);
-void move(tPlayers players, tColor playerTurn, int marker, int space, int &award, tSpaces lane1, tSpaces lane2);
+void openBridge(tPlayers players, tColor playerTurn, int space, int space2, int &reward, int &lastMarkerMoved, tSpaces lane1, tSpaces lane2);
+void move(tPlayers players, tColor playerTurn, int marker, int space, int &reward, tSpaces lane1, tSpaces lane2){
+   int previous, next;
+   previous = players[playerTurn][marker];
+   next = space;
+
+   lane1[previous] = lane2[previous];
+   lane2[previous] = None;
+
+   players[playerTurn][marker] = next;
+
+   if (next == Goal){
+      cout << "The players marker has arrived to the goal" << endl;
+      reward = 10;
+   }
+   if (next >= 0 && next <= 67){
+      if (lane1[next] == None)
+         lane1[next] = playerTurn;
+      else if (lane1[next] == playerTurn)
+         lane2[next] = playerTurn;
+      else
+      {
+         lane2[next] = lane1[next];
+         lane1[next] = playerTurn;
+         toHome(players, next, lane1, lane2);
+         reward = 20;
+      }
+   }
+}
 
 void markerOut(tPlayers players, tColor playerTurn, tSpaces lane1, tSpaces lane2)
 {
