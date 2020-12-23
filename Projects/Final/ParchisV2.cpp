@@ -40,7 +40,7 @@ typedef tColor tSpaces[NUM_SPACES];
 string colorToString(tColor color);
 char colorToLetter(tColor color);
 
-
+bool displayPossibilities(tPlayers players, tColor playerTurn, int rolled, tSpaces lane1, tSpaces lane2);
 bool allAtGoal(const tMarkers player);
 bool isSafe(int pos);
 bool bridge(const tSpaces lane1, const tSpaces lane2, int space);
@@ -102,51 +102,47 @@ int main()
          cin.get();
          cout << "A " << rolled << " is rolled" << endl;
       }
-      if (rolled == 5){
-         played = process5(players, playerTurn, reward, passTurn, lane1, lane2); 
-         if (played)
-            cout << "A marker gets out of home (reward: " << reward << ", passTurn: " << passTurn << ")" << endl;
-         else
-            cout << "No marker can get out of home" << endl;
-      } else if (rolled == 6){
-         played = process6(players, playerTurn, reward, passTurn, sixes, lastMarkerMoved, rolled, lane1, lane2);
-      }
-      if (!played){
-         bool possibleMove = false;
-         for (int m = 0; m < NUM_MARKERS ; m++) {
-            cout << m + 1 << ": ";
-            if (canMove(players, m, next, playerTurn, rolled, lane1, lane2)){
-               cout << "Can go to the space " << next << endl;
-               possibleMove = true;
-            }
-            else
-               cout << "Can not be moved" << endl;
-         }
-         if (possibleMove){
-            cout << "Marker to move: ";
-            cin >> marker;
-            cin.get();
-            marker--;
-            if (canMove(players, marker, next, playerTurn, rolled, lane1, lane2)){
-               move(players, playerTurn, marker, next, reward, lane1, lane2);
-               cout << "Reward: " << reward << endl;
-               lastMarkerMoved = marker;
-            }
-         }
-         if ((rolled > 7) && (sixes > 0)){  //Reward after a 6
-            passTurn = false;
-         }
-      }
-      if (rolled == 0)
+      if (rolled == 0) {
          end = true;
-      if (passTurn){
-         playerTurn = tColor((int(playerTurn) + 1) % NUM_PLAYERS);
-         sixes = 0;
-      } else
-         passTurn = true;
-      
-      pause();
-      display(players, lane1, lane2);
+      } else {
+         if (rolled == 5){
+            played = process5(players, playerTurn, reward, passTurn, lane1, lane2); 
+            if (played)
+               cout << "A marker gets out of home (reward: " << reward << ", passTurn: " << passTurn << ")" << endl;
+            else
+               cout << "No marker can get out of home" << endl;
+         } else if (rolled == 6){
+            played = process6(players, playerTurn, reward, passTurn, sixes, lastMarkerMoved, rolled, lane1, lane2);
+         }
+         if (!played){
+            bool possibleMove = displayPossibilities(players, playerTurn, rolled, lane1, lane2);
+
+            if (possibleMove){
+               cout << "Marker to move: ";
+               cin >> marker;
+               cin.get();
+               marker--;
+               if (canMove(players, marker, next, playerTurn, rolled, lane1, lane2)){
+                  move(players, playerTurn, marker, next, reward, lane1, lane2);
+                  cout << "Reward: " << reward << endl;
+                  lastMarkerMoved = marker;
+               }
+            }
+            if ((rolled > 7) && (sixes > 0)){  //Reward after a 6
+               passTurn = false;
+            }
+         }
+         if (rolled == 0)
+            end = true;
+         if (passTurn){
+            playerTurn = tColor((int(playerTurn) + 1) % NUM_PLAYERS);
+            sixes = 0;
+         } else
+            passTurn = true;
+         
+         pause();
+         display(players, lane1, lane2);
+      }
    }
 
    return 0;
@@ -179,11 +175,31 @@ char colorToLetter(tColor color)
    return colorToString(color)[0];
 }
 
-bool allAtGoal(const tMarkers player);
+bool displayPossibilities(tPlayers players, tColor playerTurn, int rolled, tSpaces lane1, tSpaces lane2){
+   int next;
+   bool possibleMove = false;
+   for (int m = 0; m < NUM_MARKERS ; m++) {
+   cout << m + 1 << ": ";
+   if (canMove(players, m, next, playerTurn, rolled, lane1, lane2)){
+      cout << "Can go to the space " << next << endl;
+      possibleMove = true;
+   }
+   else
+      cout << "Can not be moved" << endl;
+   }
+   return possibleMove;
+}
+bool allAtGoal(const tMarkers player){
+   bool all = true;
+   for (int marker = 0; marker < NUM_MARKERS; marker++)
+      if (player[marker] == Goal)
+         all = false;
+   return all;
+}
 bool isSafe(int pos)
 {
    bool result = false;
-   if (pos > 100)          // Zanata (maybe not correct)
+   if (pos > 100)          // Zanata (not sure if it should be safe)
       result = true;
    pos %= 17;
    if (pos == 0 || pos == 5 || pos == 12)
@@ -203,7 +219,6 @@ bool bridge(const tSpaces lane1, const tSpaces lane2, int space){
 }
 bool process5(tPlayers players, tColor playerTurn, int &reward, bool &passTurn, tSpaces lane1, tSpaces lane2)
 {
-   // Work in progress
    bool out = false;
    int start, marker;
    start = startSpace(playerTurn);
@@ -229,7 +244,7 @@ bool process6(tPlayers players, tColor playerTurn, int &reward, bool &passTurn, 
    bool out = false;
    bridges = n_bridges(players[playerTurn], marker1, marker2);
    sixes++;
-   if (firstAt(players[playerTurn], -1) == -1){
+   if (firstAt(players[playerTurn], -1) == -1){    // No markers at home
       roll = 7;
       cout << "The player has no markers at home: 7 are counted!" << endl;
    }
@@ -239,14 +254,15 @@ bool process6(tPlayers players, tColor playerTurn, int &reward, bool &passTurn, 
       cout << "Third 6 in a row...";
       if (space > 100){
          cout << "The last marker moved is beyond zanata and it is not sent home!" << endl;
-      } else{
-         cout << "The last marker is sent home!" << endl;
+      } else{  
+         // It is sent home, placing it first on lane2
+         cout << "The last marker moved is sent home!" << endl;
          if (lane2[space] != playerTurn){
             tColor temp = lane1[space];
             lane1[space] = lane2[space];
             lane2[space] = temp;
          }
-         // it is sent home, placing it first on lane2
+         toHome(players, space, lane1, lane2);
       }
       passTurn = true;
       out = true;
@@ -259,19 +275,13 @@ bool process6(tPlayers players, tColor playerTurn, int &reward, bool &passTurn, 
          out = true;
       }
       if (bridges == 2){
-         // If only the markers of one bridge can be moved, that bridge is opened
-         // If the markers of both bridges can be moved, the user will decide
          bool first, second;
-         int next2, input = 1;
+         int next2;
          first = canMove(players, marker1, next, playerTurn, roll, lane1, lane2);
          second = canMove(players, marker2, next2, playerTurn, roll, lane1, lane2);
          if (first && second){
-            cout << "There are two bridges 1. At space" << players[playerTurn][marker1] << "2. At space " << players[playerTurn][marker2] << endl;
-            cout << "Which one do you want to open (1 or 2): ";
-            cin >> input;
-         }
-         
-         if (first && input == 1){
+            out = false;
+         } else if (first){
             space = players[playerTurn][marker1];
             openBridge(players, playerTurn, space, next, reward, lastMarkerMoved, lane1, lane2);
             out = true;
@@ -288,7 +298,11 @@ bool process6(tPlayers players, tColor playerTurn, int &reward, bool &passTurn, 
    } 
    return out;
 }
-bool play(tPlayers players, tColor playerTurn, int &reward, bool &end, int &sixes, int &lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2);
+bool play(tPlayers players, tColor playerTurn, int &reward, bool &end, int &sixes, int &lastMarkerMoved, int roll, tSpaces lane1, tSpaces lane2){
+   // WIP
+   bool passTurn = true;
+   return passTurn;
+}
 bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, int rolled, const tSpaces lane1, const tSpaces lane2){
    bool canmove = true, lastMove = false;
    int position = players[playerTurn][marker];
@@ -297,7 +311,7 @@ bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, 
          position = nextSpace(position, playerTurn);        // No need to check first position
          if ((i + 1) == rolled)
             lastMove = true;
-         if (lastMove && lane1[position] != None && lane2[position] != None){ // Last move is a full of players
+         if (lastMove && lane1[position] != None && lane2[position] != None){ // Last move is full of players
             canmove = false;
             // cout << "Last space full" << endl; // Debug
          }
@@ -355,7 +369,6 @@ short dice()
       out = rand() % 6 + 1;
    return out;
 }
-short movePlayer(short player, tColor color, short rolled);
 
 int nextSpace(int position, tColor playerTurn){
    int next;
