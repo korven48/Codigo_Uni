@@ -235,12 +235,18 @@ bool process6(tPlayers players, tColor playerTurn, int &reward, bool &passTurn, 
    }
 
    if (sixes == 3){
+      space = players[playerTurn][lastMarkerMoved];
       cout << "Third 6 in a row...";
-      if (lastMarkerMoved < 100){
-         cout << "The last marker is sent home!" << endl;
-         // it is sent home, placing it first on lane2
-      } else{
+      if (space > 100){
          cout << "The last marker moved is beyond zanata and it is not sent home!" << endl;
+      } else{
+         cout << "The last marker is sent home!" << endl;
+         if (lane2[space] != playerTurn){
+            tColor temp = lane1[space];
+            lane1[space] = lane2[space];
+            lane2[space] = temp;
+         }
+         // it is sent home, placing it first on lane2
       }
       passTurn = true;
       out = true;
