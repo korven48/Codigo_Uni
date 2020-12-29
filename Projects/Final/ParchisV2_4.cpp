@@ -17,7 +17,7 @@
 using namespace std;
 
 const string FileName = "test6.txt"; // test5 canMove test6 | .txt
-const bool Debug = true;
+const bool Debug = false;
 const int Goal = 108;
 
 enum tColor
@@ -99,7 +99,6 @@ int main()
          reward = 0;
       } else {
          rolled = dice();
-         cin.get();
          cout << "A " << rolled << " is rolled" << endl;
       }
       if (rolled == 0) {
@@ -154,16 +153,16 @@ string colorToString(tColor color)
    switch (color)
    {
    case Red:
-      result = "Red";
+      result = "red";
       break;
    case Green:
-      result = "Green";
+      result = "green";
       break;
    case Blue:
-      result = "Blue";
+      result = "blue";
       break;
    case Yellow:
-      result = "Yellow";
+      result = "yellow";
       break;
    }
 
@@ -364,8 +363,8 @@ short dice()
    {
       cout << "Roll (0 to exit): ";
       cin >> out;
-   }
-   else
+      cin.get();
+   } else
       out = rand() % 6 + 1;
    return out;
 }
@@ -723,7 +722,6 @@ void setColor(tColor color)
 }
 void initialize(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lane2)
 {
-   ofstream outputFile("debug.txt");
    int temp;
 
    srand(time(NULL));
@@ -742,9 +740,7 @@ void initialize(tPlayers players, tColor &playerTurn, tSpaces lane1, tSpaces lan
    }
 
    temp = rand();
-   outputFile << temp << endl;
    temp %= NUM_PLAYERS;
-   outputFile << temp << endl;
    playerTurn = tColor(temp);
    setColor(Gray);
 }
