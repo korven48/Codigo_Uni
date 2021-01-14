@@ -1,7 +1,3 @@
-Barriers in zanata (probably corrupt data)
-
-After not possible to use reward turn is not passed
-
 [Probably fixed] 
     When marker arrives to zanata garbage is left at its position 
     (in play) If only one can be moved, it will be moved and the user informed
