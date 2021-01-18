@@ -1,6 +1,9 @@
 /*
     SUBMITTED BY:  Lucas Vukotic
-    DATE:             December 28, 2020
+    DATE:          January 16, 2020
+
+    OPTIONAL PART: Included
+    OTHER INFORMATION: 
 */
 
 #include <iostream>
@@ -61,6 +64,12 @@ struct tGame{
 
 
 string colorToString(tColor color);
+
+int canEat(tGame &game, int &space);
+int toGoal(tGame &game, int &space);
+int toSafe(tGame &game, int &space);
+int flee(tGame &game, int &space);
+int firstPossible(tGame &game,int &space);
 
 bool allAtHome(const tPlayer player);
 bool allAtGoal(const tPlayer player);        
@@ -163,6 +172,12 @@ int main()
     return 0;
 }
 
+int canEat(tGame &game, int &space);
+int toGoal(tGame &game, int &space);
+int toSafe(tGame &game, int &space);
+int flee(tGame &game, int &space);
+int firstPossible(tGame &game,int &space);
+
 string colorToString(tColor color)
 {
     string result;
@@ -184,7 +199,6 @@ string colorToString(tColor color)
 
     return result;
 }
-
 
 bool allAtHome(const tPlayer player){
     bool all = true;
@@ -476,6 +490,7 @@ int secondAt(const tMarkers player, int space)
             out = i;
     return out;
 }
+
 int n_bridges(tPlayer player, int &marker1, int &marker2){
     int bridges = 0;
     for (int i = 0; i < NUM_MARKERS; i++)
@@ -489,6 +504,7 @@ int n_bridges(tPlayer player, int &marker1, int &marker2){
             }
     return bridges;
 }
+
 
 void load(tGame &game, ifstream &file)
 {
@@ -520,7 +536,7 @@ void openBridge(tGame &game, int space, int space2){
     move(game, marker, space2);
     game.lastMarkerMoved = marker;
 }
-void move(tGame &game, int marker, int space){  
+void move(tGame &game, int marker, int space){
     int previous, next;
     previous = game.players[game.playerTurn].markers[marker];
     next = space;
@@ -555,6 +571,7 @@ void move(tGame &game, int marker, int space){
         }
     }
 }
+
 void markerOut(tGame &game)
 {
     // Saca una ficha del jugador en turno

@@ -377,7 +377,7 @@ bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, 
 
 short startSpace(tColor color)
 {
-   short result;
+   short result = 0;
    switch (color)
    {
    case Red:
