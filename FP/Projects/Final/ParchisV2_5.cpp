@@ -1,6 +1,6 @@
 /*
    SUBMITTED BY:  Lucas Vukotic
-   DATE:          October 29, 2020
+   DATE:          December 28, 2020
 */
 
 #include <iostream>
@@ -38,7 +38,6 @@ typedef tMarkers tPlayers[NUM_PLAYERS];
 typedef tColor tSpaces[NUM_SPACES];
 
 string colorToString(tColor color);
-char colorToLetter(tColor color);
 
 bool displayPossibilities(tPlayers players, tColor playerTurn, int rolled, tSpaces lane1, tSpaces lane2);
 bool allAtGoal(const tMarkers player);
@@ -86,6 +85,8 @@ int main()
       load(players, playerTurn, lane1, lane2);
    display(players, lane1, lane2);
 
+
+
    setColor(playerTurn);
    cout << "The " << colorToString(playerTurn) << " player starts" << endl;
    while (!end)
@@ -119,18 +120,19 @@ int main()
          if (!played){
             passTurn = play(players, playerTurn, passTurn, reward, end, sixes, lastMarkerMoved, rolled, lane1, lane2);
          }
-         if (allAtGoal(players[playerTurn])){
-            cout << "The " << colorToString(playerTurn) << " player wins!" << endl;
-            end = true;
-         } else if (passTurn){
-            playerTurn = tColor((int(playerTurn) + 1) % NUM_PLAYERS);
-            sixes = 0;
-         } else
-            passTurn = true;
-         
-         
-         pause();
-         display(players, lane1, lane2);
+         if (!end){
+            if (allAtGoal(players[playerTurn])){
+               cout << "The " << colorToString(playerTurn) << " player wins!" << endl;
+               end = true;
+            } else if (passTurn){
+               playerTurn = tColor((int(playerTurn) + 1) % NUM_PLAYERS);
+               sixes = 0;
+            } else
+               passTurn = true;
+            
+            pause();
+            display(players, lane1, lane2);
+         }
       }
    }
 
@@ -157,11 +159,6 @@ string colorToString(tColor color)
    }
 
    return result;
-}
-
-char colorToLetter(tColor color)
-{
-   return colorToString(color)[0];
 }
 
 bool displayPossibilities(tPlayers players, tColor playerTurn, int rolled, tSpaces lane1, tSpaces lane2){
@@ -207,8 +204,8 @@ bool isSafe(int pos)
 }
 bool bridge(const tSpaces lane1, const tSpaces lane2, int space){
    bool out;
-   // out = space >= 0 && space <= 67;                // Space must be in the street
-   out = lane1[space] == lane2[space]; // && out     // If two markers of the same player in the space are
+   out = space >= 0 && space <= 67;                // Space must be in the street
+   out = out && (lane1[space] == lane2[space]);     // If two markers of the same player in the space are
    out = out && (lane1[space] != None);              // Those are real markers not space
 
    return out;
@@ -359,11 +356,14 @@ bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, 
          if (position == Goal && !lastMove)  // Moved further than goal
             canmove = false;
 
-         if (bridge(lane1, lane2, position) && lastMove)  // Lanes are full
-            canmove = false;
-
          if (bridge(lane1, lane2, position) && isSafe(position))  // Barrier encountered
             canmove = false;
+
+         if (bridge(lane1, lane2, position) && lastMove)  // Lanes are full
+            canmove = false;
+         
+         if (firstAt(players[playerTurn], position) != secondAt(players[playerTurn], position) && lastMove)
+            canmove = false;   // Lanes are full but also works for zanatas (outside of lanes)
 
          if (position < -1 || (position > 67 && position < 100) || position > Goal) // Out of bounds (just in case)
             canmove = false;
@@ -377,7 +377,7 @@ bool canMove(const tPlayers players, int marker, int &space, tColor playerTurn, 
 
 short startSpace(tColor color)
 {
-   short result;
+   short result = 0;
    switch (color)
    {
    case Red:
