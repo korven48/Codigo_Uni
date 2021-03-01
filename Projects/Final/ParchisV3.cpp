@@ -1,6 +1,8 @@
 /*
     SUBMITTED BY:  Lucas Vukotic
-    DATE:             December 28, 2020
+    DATE:          January 15, 2020
+
+    No optional part was included
 */
 
 #include <iostream>
@@ -217,8 +219,8 @@ bool bridge(const tGame &game, int pos){
     tSpace space = game.spaces[pos];
     bool out;
     out = pos >= 0 && pos <= 67;                     // Space must be in the street
-    out = out && (space.lane1 == space.lane2);      // If two markers of the same player in the space are
-    out = out && (space.lane1 != None);                  // Those are real markers not space
+    out = out && (space.lane1 == space.lane2);       // If two markers of the same player in the space 
+    out = out && (space.lane1 != None);              // Those are real markers not spaces
 
     return out;
 }
@@ -362,8 +364,6 @@ bool canMove(const tGame &game, int marker, int &space){
             position = nextSpace(position, game.playerTurn);          // No need to check first position
             if ((i + 1) == game.roll)
                 lastMove = true;
-            // if (lastMove && game.spaces[position].lane1 != None && game.spaces[position].lane2 != None) // Last move is full of players
-            //     canmove = false;
 
             if (position == Goal && !lastMove)  // Moved further than goal
                 canmove = false;
@@ -510,7 +510,7 @@ void load(tGame &game, ifstream &file)
             }
         file >> player;
         game.playerTurn = tColor(player);
-        // file.close();
+        // file.close(); it is closed in dice() as it is used to get the rolls
     } else 
         cout << "File not found" << endl;
 }
@@ -529,8 +529,6 @@ void move(tGame &game, int marker, int space){
     if (game.spaces[previous].lane1 == game.playerTurn)
         game.spaces[previous].lane1 = game.spaces[previous].lane2;
     game.spaces[previous].lane2 = None;
-    // lane1[previous] = lane2[previous];      // Maybe problematic
-    // lane2[previous] = None;
 
     game.players[game.playerTurn].markers[marker] = next;
 
@@ -749,20 +747,20 @@ void setColor(tColor color)
     switch (color)
     {
     case Yellow:
-        cout << "\x1b[33;40m";
+        cout << "\x1b[33;107m";
         break;
     case Blue:
-        cout << "\x1b[34;40m";
+        cout << "\x1b[34;107m";
         break;
     case Red:
-        cout << "\x1b[31;40m";
+        cout << "\x1b[31;107m";
         break;
     case Green:
-        cout << "\x1b[32;40m";
+        cout << "\x1b[32;107m";
         break;
     case Gray:
     case None:
-        cout << "\x1b[97;40m";     // \x1b[90;107m
+        cout << "\x1b[90;107m";     // \x1b[90;107m      107 - white  40 - black        90 grey, 97 white
         break;
     }
 }

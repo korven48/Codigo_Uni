@@ -172,11 +172,21 @@ int main()
     return 0;
 }
 
-int canEat(tGame &game, int &space);
-int toGoal(tGame &game, int &space);
-int toSafe(tGame &game, int &space);
-int flee(tGame &game, int &space);
-int firstPossible(tGame &game,int &space);
+int canEat(tGame &game, int &space){
+
+}
+int toGoal(tGame &game, int &space){
+
+}
+int toSafe(tGame &game, int &space){
+
+}
+int flee(tGame &game, int &space){
+
+}
+int firstPossible(tGame &game,int &space){
+    
+}
 
 string colorToString(tColor color)
 {
@@ -401,7 +411,6 @@ bool canMove(const tGame &game, int marker, int &space){
     return canmove;
 }
 
-
 short startSpace(tColor color)
 {
     short result = 0;
@@ -448,7 +457,6 @@ short dice(ifstream &file)
     return out;
 }
 
-
 int nextSpace(int position, tColor playerTurn){
     int next;
     if (position == zanataSpace(playerTurn))
@@ -490,7 +498,6 @@ int secondAt(const tMarkers player, int space)
             out = i;
     return out;
 }
-
 int n_bridges(tPlayer player, int &marker1, int &marker2){
     int bridges = 0;
     for (int i = 0; i < NUM_MARKERS; i++)
@@ -504,7 +511,6 @@ int n_bridges(tPlayer player, int &marker1, int &marker2){
             }
     return bridges;
 }
-
 
 void load(tGame &game, ifstream &file)
 {
@@ -571,7 +577,6 @@ void move(tGame &game, int marker, int space){
         }
     }
 }
-
 void markerOut(tGame &game)
 {
     // Saca una ficha del jugador en turno
