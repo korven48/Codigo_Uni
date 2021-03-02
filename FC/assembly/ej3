@@ -1,0 +1,2 @@
+            .global start
+            @ .equ    N, 6
