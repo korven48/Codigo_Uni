@@ -1,6 +1,6 @@
 /*
    SUBMITTED BY:  Lucas Vukotic
-   DATE:          October 29, 2020
+   DATE:          March 1, 2020
 */
 
 #include <iostream>
@@ -30,20 +30,61 @@ typedef tPixelRow tScreen[ColumnLen];
 
 typedef int tCountColors[ColorNum];
 
-tColor mostUsedColor(tScreen& screen, int row);
-void firstBlink(tScreen& screen, int& row, int& column);
+tColor mostUsedColor(const tScreen& screen, int row);
+void firstBlink(const tScreen& screen, int& row, int& column);
+void init(tScreen& screen);
+string colorToString(tColor color);
 
 int main()
 {
     tScreen screen;
     int row = 3, column;
-    mostUsedColor(screen, row);
+    tColor color;
+    init(screen);
+    color = mostUsedColor(screen, row);
+    cout << "Most Used Color is " << colorToString(color) << endl;
     firstBlink(screen, row, column);
-    cout << row << " " << column << endl;
+    cout << "First blinking pixel is in position " << row << " " << column << endl;
     return 0;
 }
 
-tColor mostUsedColor(tScreen& screen, int row){
+string colorToString(tColor color){
+    string result = "";
+    switch (color) {
+        case 0: 
+            result = "black"; 
+            break;
+        case 1: 
+            result = "blue"; 
+            break;
+        case 2: 
+            result = "green"; 
+            break;
+        case 3: 
+            result = "yellow"; 
+            break;
+        case 4: 
+            result = "red"; 
+            break;
+    }
+    return result;
+}
+
+void init(tScreen& screen){
+    tPixel pixel;
+    pixel.blink = false;
+    pixel.chr = 'c';
+    pixel.color = red;
+
+    for (int i = 0; i < RowLen; i++) {
+        for (int j = 0; j < ColumnLen; j++) {
+            screen[j][i] = pixel;
+        }
+    }
+    screen[0][4] = tPixel{'y', green, true};
+}
+
+tColor mostUsedColor(const tScreen& screen, int row){
     tColor color;
     tCountColors nColors;
     int index, max;
@@ -63,7 +104,7 @@ tColor mostUsedColor(tScreen& screen, int row){
     }
     return color;
 }
-void firstBlink(tScreen& screen, int& row, int& column){
+void firstBlink(const tScreen& screen, int& row, int& column){
     bool found = false;
     row = 0;
     while (row < RowLen && !found){
@@ -77,4 +118,6 @@ void firstBlink(tScreen& screen, int& row, int& column){
         if (!found)
             ++row;
     }
+    if (!found)
+        row = column = -1;
 }
