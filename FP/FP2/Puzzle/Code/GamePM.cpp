@@ -6,6 +6,7 @@
 #include <iostream>
 #include <UtilitiesSYS.h>
 #include <GamePM.h>
+#include <Matrix.h>
 
 using namespace std;
 
@@ -13,8 +14,11 @@ using namespace std;
 
 int main()
 {
-    chcp1252();
-    mainGamePM();
+    // chcp1252();
+    // mainGamePM();
+    tGamePM pm;
+    load(pm);
+    show(pm);
     return 0;
 }
 
@@ -38,13 +42,27 @@ bool initiate(tGamePM &pm, string mode, int num){
 
 }
 bool load(tGamePM &pm){
-    string name;
+    int mode, attempts;
+    string filename;
+    ifstream in;
+    mode = menu();
+    pm.mode = mode;
     cout << "Name of the file without the extension" << endl;
     cout << "Name: ";
-    cin >> name;
+    cin >> filename;
+    filename = filename + string("_") + char('0' + mode) + 'D';
+    in.open(filename);
+    if (in.is_open()){
+        load(pm.initial, in);
+        load(pm.objective, in);
+        in >> attempts;
+    }
+    pm.attempts = attempts;
 }
 void show(tGamePM const &pm){
-
+    for (int i = 0; i < pm.initial.height; i++)
+        for (int j=0; j < pm.initial.width; j++)
+            cout << pm.initial.image[i][j] << endl;
 }
 bool play(tGamePM &pm){
 
