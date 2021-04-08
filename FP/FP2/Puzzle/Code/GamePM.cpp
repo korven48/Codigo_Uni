@@ -4,22 +4,17 @@
 */
 
 #include <iostream>
+#include <UtilitiesSYS.h>
+#include <GamePM.h>
 
 using namespace std;
 
-void mainGamePM();
-int menu();
-bool initiate(tGamePM &pm, string mode, int num);
-bool load(tGamePM &pm);
-void show(tGamePM const &pm);
-bool play(tGamePM &pm);
-bool action(tGamePM &pm);
 
 
 int main()
 {
-
-
+    chcp1252();
+    mainGamePM();
     return 0;
 }
 
@@ -43,7 +38,10 @@ bool initiate(tGamePM &pm, string mode, int num){
 
 }
 bool load(tGamePM &pm){
-
+    string name;
+    cout << "Name of the file without the extension" << endl;
+    cout << "Name: ";
+    cin >> name;
 }
 void show(tGamePM const &pm){
 
