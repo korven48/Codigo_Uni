@@ -99,10 +99,9 @@ bool swapD(tMatrixChar& mat, int d) {
 bool flipR(tMatrixChar& mat, int r) {
     bool correct = inHeight(mat, r);
     tCoor pos1, pos2;
-    int half = mat.width / 2 + mat.width % 2;
     pos1.y = r;
     pos2.y = r;
-    for (int x = 0; x < ; x++) {
+    for (int x = 0; x < mat.width / 2; x++) {
         pos1.x = x;
         pos2.x = mat.width - x - 1;
         swap(mat, pos1, pos2);
@@ -114,17 +113,29 @@ bool flipC(tMatrixChar& mat, int c) {
     tCoor pos1, pos2;
     pos1.x = c;
     pos2.x = c;
-    for (int y = 0; y < mat.width; y++) {
+    for (int y = 0; y < mat.height / 2; y++) {
         pos1.y = y;
-        pos2.y = mat.width - y - 1;
+        pos2.y = mat.height - y - 1;
         swap(mat, pos1, pos2);
     }
     return correct;
 }
 bool flipD(tMatrixChar& mat, int d) {
-    bool correct = false;
-    tCoor pos1, pos2;
-
+    bool correct = (mat.height == mat.width) && inWidth(mat, d);
+    int length = mat.height - 1;
+    tCoor pos1, pos2, downRight;
+    pos1.x = d;
+    pos1.y = 0;
+    pos2.x = length - pos1.y;
+    pos2.y = length - pos1.x;
+    downRight.x = 1;
+    downRight.y = 1;
+    for (int i = 0; i < (mat.height / 2 - d); i++) {
+        swap(mat, pos1, pos2);
+        pos1 = pos1 + downRight;
+        pos2.x = length - pos1.y;
+        pos2.y = length - pos1.x;
+    }
     return correct;
 }
 void flipV(tMatrixChar& mat) {
