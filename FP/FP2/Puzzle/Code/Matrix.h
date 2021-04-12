@@ -1,6 +1,9 @@
+#ifndef COORDINATES_H
+#define COORDINATES_H
+
 #include <iostream>
 #include <fstream>
-#include <Coordinates.h>
+#include "Coordinates.h"
 
 using namespace std;
 
@@ -22,4 +25,12 @@ bool swapR(tMatrixChar &mat, int r1, int r2);
 bool swapC(tMatrixChar &mat, int c1, int c2);
 bool swapD(tMatrixChar &mat, int d);
 bool flipR(tMatrixChar &mat, int r); 
-bool flipID(tMatrixChar & mat);
+bool flipC(tMatrixChar& mat, int c);
+bool flipD(tMatrixChar& mat, int d);
+void flipV(tMatrixChar& mat);
+void flipH(tMatrixChar& mat);
+void rotateR(tMatrixChar & mat);
+bool swapAdj(tMatrixChar& mat, tCoor pos1, tCoor pos2);
+bool flipID(tMatrixChar& mat);
+
+#endif

@@ -4,18 +4,11 @@
 */
 
 #include <iostream>
-#include <Coordinates.h>
+#include "Coordinates.h"
 
 using namespace std;
 
 
-
-int main()
-{
-
-
-    return 0;
-}
 
 bool operator == (tCoor c1, tCoor c2){
     bool equal = false;

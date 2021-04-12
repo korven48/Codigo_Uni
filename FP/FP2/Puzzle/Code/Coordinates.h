@@ -1,3 +1,6 @@
+#ifndef A
+#define A
+
 #include <iostream>
 
 using namespace std;
@@ -10,3 +13,5 @@ struct tCoor{
 bool operator == (tCoor c1, tCoor c2); 
 bool operator != (tCoor c1, tCoor c2);    
 tCoor operator + (tCoor c1, tCoor c2); 
+
+#endif
