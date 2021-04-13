@@ -139,17 +139,39 @@ bool flipD(tMatrixChar& mat, int d) {
     return correct;
 }
 void flipV(tMatrixChar& mat) {
-
+    for (int row = 0; row < mat.height; row++){
+        flipR(mat, row);
+    }
 }
 void flipH(tMatrixChar& mat) {
-
+    for (int col = 0; col < mat.width; col++){
+        flipC(mat, col);
+    }
 }
 void rotateR(tMatrixChar& mat) {
-
+    tMatrixChar rotated;
+    int rowImage;
+    rotated.height = mat.width;
+    rotated.width = mat.height;
+    for (int row = 0; row < mat.height; row++){
+        for (int col = 0; col < mat.width; col++){
+            rowImage = rotated.width - row - 1;
+            rotated.image[col][rowImage] = mat.image[row][col];
+        }
+    }
+    mat = rotated;
 }
 bool swapAdj(tMatrixChar& mat, tCoor pos1, tCoor pos2) {
-    bool correct = false;
-
+    // ------------------------------------------- Dont know if I should check if in corner -------------------------
+    tCoor neighbor1, neighbor2, vector;
+    bool correct = true;
+    for (vector.y = -1; vector.y <= 1; vector.y++){
+        for (vector.x = -1; vector.x <= 1; vector.x++){
+            neighbor1 = pos1 + vector;
+            neighbor2 = pos2 + vector;
+            swap(neighbor1, neighbor2);
+        }
+    }
     return correct;
 }
 bool flipID(tMatrixChar& mat) {

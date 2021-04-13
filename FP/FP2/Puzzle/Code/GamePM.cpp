@@ -101,12 +101,12 @@ void show(tGamePM const &pm){
 
 }
 void displayImage(const tMatrixChar& img) {
-    cout << " ";
-    for (int i = 0; i < img.height; i++)
+    cout << "   ";
+    for (int i = 0; i < img.width; i++)
         cout << setw(2) << i;
     cout << endl;
     for (int i = 0; i < img.height; i++) {
-        cout << i;
+        cout << setw(3) << left << i;
         for (int j = 0; j < img.width; j++) {
             colorCTA(7, img.image[i][j] - '0');
             //cout << img.image[i][j];
