@@ -167,15 +167,25 @@ bool swapAdj(tMatrixChar& mat, tCoor pos1, tCoor pos2) {
     bool correct = true;
     for (vector.y = -1; vector.y <= 1; vector.y++){
         for (vector.x = -1; vector.x <= 1; vector.x++){
-            neighbor1 = pos1 + vector;
-            neighbor2 = pos2 + vector;
-            swap(neighbor1, neighbor2);
+            if (!(vector.x == 0 && vector.y == 0)) {
+                neighbor1 = pos1 + vector;
+                neighbor2 = pos2 + vector;
+                swap(mat, neighbor1, neighbor2);
+            }
         }
     }
     return correct;
 }
 bool flipID(tMatrixChar& mat) {
-    bool correct = false;
-
+    bool correct = (mat.height == mat.width);
+    tMatrixChar flipped;
+    if (correct) {
+        flipped.height = mat.width;
+        flipped.width = mat.height;
+        for (int row = 0; row < mat.height; row++)
+            for (int col = 0; col < mat.width; col++)
+                flipped.image[row][col] = mat.image[col][row];
+        mat = flipped;
+    }
     return correct;
 }

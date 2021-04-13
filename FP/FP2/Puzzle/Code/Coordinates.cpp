@@ -1,6 +1,6 @@
 /*
-   SUBMITTED BY:  Lucas Vukotic
-   DATE:          October 29, 2020
+   SUBMITTED BY:  Lucas Vukotic and Iván Gallego
+   DATE:          April 4, 2021
 */
 
 #include <iostream>
