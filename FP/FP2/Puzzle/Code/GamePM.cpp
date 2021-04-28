@@ -25,16 +25,19 @@ void mainGamePM(){
 
     do {
         loaded = load(pm);
-        if (!loaded) {
+        if (pm.mode == 0) {
+            cout << "Exiting puzzle..." << endl;
+        }
+        else if (!loaded) {
             cout << "File doesn't exist, exiting..." << endl;
             pm.mode = 0;
         }
-        else {
+        else{
             win = play(pm);
             if (win)
                 cout << "Congratulations, you have solved the puzzle!" << endl << endl;
             else
-                cout << "Try again..." << endl << endl;
+                cout << "You lost, try again..." << endl << endl;
         }
         
     } while (pm.mode != 0);
@@ -52,20 +55,22 @@ int menu()
     cout << endl;
     return option;
 }
-bool initiate(tGamePM &pm, string mode, int num);
+bool initiate(tGamePM& pm, string mode, int num) {
+    // I just don´t know what should this function do and I found no use for it
+    return false;
+}
 bool load(tGamePM &pm){
     bool ok = false;
-    int mode, attempts;
+    int attempts;
     string filename;
     ifstream in;
-    mode = menu();
-    pm.mode = mode;
-    if (mode != 0) {
+    pm.mode = menu();
+    if (pm.mode != 0) {
         cout << "Name of the file without the extension" << endl;
         cout << "Name: ";
         cin >> filename;
         cout << endl;
-        filename = string("Files/") + filename + string("_") + char('0' + mode) + 'D' + string(".txt");
+        filename = string("Files/") + filename + '_' + char('0' + pm.mode) + 'D' + string(".txt");
         in.open(filename);
         if (in.is_open()){
             load(pm.initial, in);
@@ -81,9 +86,7 @@ bool load(tGamePM &pm){
 void show(tGamePM const &pm){
     displayImage(pm.initial);
     displayImage(pm.objective);
-    cout << "You have " << pm.attempts << " attempts left." << endl;
-    cout << endl;
-
+    cout << "You have " << pm.attempts << " attempts left." << endl << endl;
 }
 void displayImage(const tMatrixChar& img) {
     cout << "   ";
@@ -125,43 +128,62 @@ bool play(tGamePM& pm) {
 bool action(tGamePM& pm) {
     bool ok = true;
     string action;
-    int a, b, c, d;
     cout << "Insert your action: ";
     cin >> action;
-    // Still need to check if action corresponds with mode 
+    if (pm.mode == 1)
+        ok = action1D(pm.initial, action);
+    else
+        ok = action2D(pm.initial, action);
+    return ok;
+}
+
+bool action1D(tMatrixChar& image, string action) {
+    bool ok = true;
+    int a, b, c, d;
+
     if (action == "RS") {
         cin >> a >> b;
-        ok = swapR(pm.initial, a, b);
-    } 
-    else if (action == "CS"){
+        ok = swapR(image, a, b);
+    }
+    else if (action == "CS") {
         cin >> a >> b;
-        ok = swapC(pm.initial, a, b);
+        ok = swapC(image, a, b);
     }
-    else if (action == "DS"){
+    else if (action == "DS") {
         cin >> a;
-        ok = swapD(pm.initial, a);
+        ok = swapD(image, a);
     }
-    else if (action == "RF"){
+    else if (action == "RF") {
         cin >> a;
-        ok = flipR(pm.initial, a);
+        ok = flipR(image, a);
     }
-    else if (action == "CF"){
+    else if (action == "CF") {
         cin >> a;
-        ok = flipC(pm.initial, a);
+        ok = flipC(image, a);
     }
-    else if (action == "DF" && pm.mode == 1) {
+    else if (action == "DF") {
         cin >> a;
-        ok = flipD(pm.initial, a);
+        ok = flipD(image, a);
     }
-    // 2D
-    else if (action == "VF") {
-        flipV(pm.initial);
+    else {
+        ok = false;
+    }
+
+    return ok;
+}
+
+bool action2D(tMatrixChar& image, string action) {
+    bool ok = true;
+    int a, b, c, d;
+
+    if (action == "VF") {
+        flipV(image);
     }
     else if (action == "HF") {
-        flipH(pm.initial);
+        flipH(image);
     }
     else if (action == "RR") {
-        rotateR(pm.initial);
+        rotateR(image);
     }
     else if (action == "NS") {
         cin >> a >> b >> c >> d;
@@ -170,14 +192,13 @@ bool action(tGamePM& pm) {
         pos1.y = b;
         pos2.x = c;
         pos2.y = d;
-        ok = swapAdj(pm.initial, pos1, pos2);
+        ok = swapAdj(image, pos1, pos2);
     }
     else if (action == "DF") {
-        ok = flipID(pm.initial);
+        ok = flipID(image);
     }
     else {
         ok = false;
     }
-
     return ok;
 }

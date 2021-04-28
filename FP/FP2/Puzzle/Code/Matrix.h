@@ -1,5 +1,5 @@
-#ifndef COORDINATES_H
-#define COORDINATES_H
+#ifndef MATRIX_H
+#define MATRIX_H
 
 #include <iostream>
 #include <fstream>

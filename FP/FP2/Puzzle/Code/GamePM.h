@@ -21,5 +21,7 @@ void show(tGamePM const &pm);
 void displayImage(const tMatrixChar& img);
 bool play(tGamePM &pm);
 bool action(tGamePM &pm);
+bool action1D(tMatrixChar& image, string action);
+bool action2D(tMatrixChar& image, string action);
 
 #endif

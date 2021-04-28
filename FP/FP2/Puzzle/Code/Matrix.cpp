@@ -164,7 +164,7 @@ void rotateR(tMatrixChar& mat) {
 bool swapAdj(tMatrixChar& mat, tCoor pos1, tCoor pos2) {
     // ------------------------------------------- Dont know if I should check if in corner -------------------------
     tCoor neighbor1, neighbor2, vector;
-    bool correct = true;
+    bool correct = inHeight(mat, pos1.y) && inWidth(mat, pos1.x) && inHeight(mat, pos2.y) && inWidth(mat, pos2.x);
     for (vector.y = -1; vector.y <= 1; vector.y++){
         for (vector.x = -1; vector.x <= 1; vector.x++){
             if (!(vector.x == 0 && vector.y == 0)) {
