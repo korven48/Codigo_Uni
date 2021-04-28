@@ -46,8 +46,9 @@ void mainGamePM(){
 int menu()
 {
     int option = 0;
-    cout << "1 Version of the game - 1D" << endl;
-    cout << "2 Version of the game - 2D" << endl;
+    cout << "1 Solve a 1D puzzle" << endl; 
+    cout << "2 Solve a 2D puzzle" << endl;
+    cout << "3 Add a puzzle to the catalog" << endl;
     cout << "0 Exit" << endl;
     cout << "Select an option: ";
     cin >> option;
