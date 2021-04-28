@@ -7,7 +7,8 @@ struct tPuzzle {
 	string file;
 	string type;
 	int maxMoves;
-
+	tMatrixChar initial;
+	tMatrixChar objective;
 };
 
 void mainPuzzle(tPuzzle& p);
