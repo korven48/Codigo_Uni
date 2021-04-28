@@ -1,6 +1,6 @@
 /*
-   SUBMITTED BY:  Lucas Vukotic
-   DATE:          October 29, 2020
+   SUBMITTED BY:  Lucas Vukotic and Iván Gallego
+   DATE:          April 4, 2021
 */
 
 #include <iostream>
@@ -11,28 +11,6 @@
 
 using namespace std;
 
-void printColor(int color) {
-    colorCTA(0, color);
-    cout << "  ";
-    colorCTA(7, 0);
-}
-
-//int main() {
-//    tGamePM pm;
-//
-//    load(pm);
-//    show(pm);
-//    tCoor pos1, pos2;
-//    pos1.x = 0;
-//    pos1.y = 0;
-//    pos2.x = 0;
-//    pos2.y = 1;
-//    swap(pm.initial, pos1, pos2);
-//    swapR(pm.initial, 0, 1);
-//    show(pm);
-//    return 0;
-//}
-
 int main()
 {
     chcp1252();
@@ -41,19 +19,25 @@ int main()
 }
 
 void mainGamePM(){
-    bool win;
+    bool loaded, win;
     tGamePM pm;
   
-    load(pm);
-    while (pm.mode != 0)
-    {
-        win = play(pm);
-        if (win)
-            cout << "Congratulations, you have solved the puzzle!" << endl << endl;
-        else
-            cout << "Try again..." << endl << endl;
-        load(pm);
-    }
+
+    do {
+        loaded = load(pm);
+        if (!loaded) {
+            cout << "File doesn't exist, exiting..." << endl;
+            pm.mode = 0;
+        }
+        else {
+            win = play(pm);
+            if (win)
+                cout << "Congratulations, you have solved the puzzle!" << endl << endl;
+            else
+                cout << "Try again..." << endl << endl;
+        }
+        
+    } while (pm.mode != 0);
 }
 
 int menu()
@@ -110,7 +94,6 @@ void displayImage(const tMatrixChar& img) {
         cout << setw(3) << left << i;
         for (int j = 0; j < img.width; j++) {
             colorCTA(7, img.image[i][j] - '0');
-            //cout << img.image[i][j];
             cout << "  ";
         }
         colorCTA(7, 0);
@@ -132,9 +115,8 @@ bool play(tGamePM& pm) {
         
         show(pm);
 
-        if (pm.initial == pm.objective) {
+        if (pm.initial == pm.objective)
             win = true;
-        }
         
     }
     return win;
